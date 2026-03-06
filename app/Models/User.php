@@ -9,6 +9,17 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    // protected $table = 'USERS';
+    // protected $primaryKey = 'ID_USERS';
+    // public $timestamps = false; // Karena di SQL tidak ada created_at/updated_at
+
+    // protected $fillable = [
+    //     'NAME', 
+    //     'EMAIL', 
+    //     'PASSWORD', 
+    //     'ROLE', 
+    //     'TANGGAL_PEMBELIAN'
+    // ];
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
