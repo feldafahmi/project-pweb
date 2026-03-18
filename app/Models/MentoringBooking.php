@@ -11,6 +11,10 @@ class MentoringBooking extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'ID_USERS', 'USE_ID_USERS', 'SCEHEDULE_DATE', 'MEETING_LINK', 'STATUS'
+        'ID_USERS', 
+        'USE_ID_USERS', 
+        'SCEHEDULE_DATE', 
+        'MEETING_LINK', 
+        'STATUS'
     ];
 }

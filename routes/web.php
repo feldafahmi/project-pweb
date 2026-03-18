@@ -27,7 +27,7 @@ Route::get('/product', function () {
 });
 
 Route::get('/login-page', function () {
-    return view('login-page');
+    return view('masuk');
 });
 
 Route::get('/sign-in-page', function () {
