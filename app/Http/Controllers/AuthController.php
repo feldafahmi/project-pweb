@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Di function register
+    // REGISTER
     public function register(Request $request) {
     $request->validate([
         'name' => 'required',
@@ -26,7 +26,7 @@ class AuthController extends Controller
     return response()->json(['message' => 'Registrasi Berhasil', 'user' => $user], 201);
     }
 
-
+    // LOGIN
     public function login(Request $request) {
         $credentials = [
             'email' => $request->email,
@@ -34,13 +34,34 @@ class AuthController extends Controller
         ];
 
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json([
-                'message' => 'Login Berhasil',
-                'user' => $user
-            ], 200);
-        }
+        $user = Auth::user();
+        
+        // Hapus token lama (opsional, agar satu user cuma punya 1 token aktif)
+        $user->tokens()->delete();
+
+        // Buat token baru
+        $token = $user->createToken('mobile_token')->plainTextToken;
+
+        // Kirim token ke Flutter
+        return response()->json([
+            'message' => 'Login Berhasil',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ]);
+    }
 
         return response()->json(['message' => 'Email atau Password salah'], 401);
     }
+
+    // LOGOUT
+    public function logout(Request $request)
+{
+    // Menghapus token yang sedang digunakan untuk request ini
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json([
+        'message' => 'Logout berhasil, token telah dihapus'
+    ], 200);
+}
 }
