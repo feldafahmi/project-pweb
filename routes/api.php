@@ -11,11 +11,11 @@ use App\Http\Controllers\VideoController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::get('/debug-db', [DebugController::class, 'checkDb']);
+// Route::get('/debug-db', [DebugController::class, 'checkDb']);
 
-Route::get('/mentor', [DebugController::class, 'checkMentor']);
+// Route::get('/mentor', [DebugController::class, 'checkMentor']);
 
-Route::apiResource('videos', VideoController::class);
+// Route::apiResource('videos', VideoController::class);
 
 use App\Http\Controllers\AuthController;
 Route::post('/register', [AuthController::class, 'register']);

@@ -13,7 +13,7 @@ class DebugController extends Controller
     {
         return response()->json([
             'status' => 'Success',
-            'message' => 'GACOR KING!!!',
+            'message' => 'UJI COBA',
             'data' => [
                 'videos' => Video::all(), // Mengambil data dari tabel VIDEO
                 'users' => User::all(),   // Mengambil data dari tabel USERS
