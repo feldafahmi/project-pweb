@@ -12,17 +12,19 @@
     --font-main: "Plus Jakarta Sans", sans-serif;
 }
 
-/* Terapkan font ke SEMUA elemen agar tidak ada yang terlewat */
 *,
 *::before,
 *::after {
-    font-family: var(--font-main) !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     margin: 0;
     overflow-x: hidden;
     background-color: #f8f9fa; /* Warna dasar ringan jika gambar gagal load */
+    font-family: var(--font-main);
 }
 
 /* NAVBAR */
@@ -165,7 +167,62 @@ body {
     width: 100%;
 }
 
-/* HERO SECTION */
+/* Dropdownnya navbar */
+.nav-item-dropdown {
+    position: relative; /* Menjadi jangkar agar dropdown tidak lari ke mana-mana */
+}
+
+/* Kotak Dropdown-nya */
+.dropdown-menu-custom {
+    position: absolute;
+    top: 100%; /* Muncul tepat di bawah text navbar */
+    left: 0;
+    background-color: #ffffff;
+    min-width: 220px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Efek bayangan lembut */
+    border-radius: 12px;
+    padding: 12px 0;
+    list-style: none;
+
+    /* State Awal: Tersembunyi & Agak Turun ke Bawah */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+/* State Saat Di-Hover: Muncul & Naik ke Atas */
+.nav-item-dropdown:hover .dropdown-menu-custom {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Styling Link di Dalam Dropdown */
+.dropdown-menu-custom li a {
+    display: block;
+    padding: 10px 24px;
+    color: var(--mu-gray, #64748b);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+/* Efek saat link dropdown di-hover (geser ke kanan sedikit) */
+.dropdown-menu-custom li a:hover {
+    color: var(--mu-navy, #1a2b56);
+    background-color: #f8fafc;
+    padding-left: 30px;
+}
+
+/* Animasi putar panah chevron (opsional, bikin UI lebih interaktif) */
+.nav-item-dropdown:hover .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* ==== HERO SECTION ==== */
 .hero-section {
     position: relative;
     height: 100vh;
