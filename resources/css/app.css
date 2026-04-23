@@ -1,26 +1,28 @@
 /* Import Font Plus Jakarta Sans langsung ke CSS (Opsional jika belum ada di HTML) */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 :root {
-    --mu-navy: #1A2B56;
-    --mu-yellow: #F5EB5E;
-    --mu-white: #FFFFFF;
-    --mu-text-nav: #4A5568;
+    --mu-navy: #1a2b56;
+    --mu-yellow: #f5eb5e;
+    --mu-white: #ffffff;
+    --mu-text-nav: #4a5568;
     --mu-text-light: rgba(255, 255, 255, 0.9);
-    
+
     /* Set Variabel Font */
-    --font-main: 'Plus Jakarta Sans', sans-serif;
+    --font-main: "Plus Jakarta Sans", sans-serif;
 }
 
 /* Terapkan font ke SEMUA elemen agar tidak ada yang terlewat */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     font-family: var(--font-main) !important;
 }
 
 body {
     margin: 0;
     overflow-x: hidden;
-    background-color: #F8F9FA; /* Warna dasar ringan jika gambar gagal load */
+    background-color: #f8f9fa; /* Warna dasar ringan jika gambar gagal load */
 }
 
 /* NAVBAR */
@@ -34,7 +36,7 @@ body {
     display: flex;
     align-items: center;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
 .nav-wrapper {
@@ -73,15 +75,15 @@ body {
 
 .nav-link-custom {
     text-decoration: none;
-    color: #4A5568;
+    color: #4a5568;
     font-weight: 600;
     font-size: 15px;
     transition: all 0.3s ease;
 }
 
-.nav-link-custom:hover, 
+.nav-link-custom:hover,
 .nav-link-custom.active {
-    color: #1A2B56; /* Navy sesuai brand */
+    color: #1a2b56; /* Navy sesuai brand */
 }
 
 /* Garis bawah untuk menu aktif */
@@ -91,13 +93,13 @@ body {
 }
 
 .nav-link-custom.active::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
     width: 100%;
     height: 3px;
-    background: #1A2B56;
+    background: #1a2b56;
     border-radius: 2px;
 }
 
@@ -116,8 +118,8 @@ body {
 
 /* Style Tombol Masuk (Outline) */
 .btn-nav-outline {
-    border: 2px solid #1A2B56;
-    color: #1A2B56;
+    border: 2px solid #1a2b56;
+    color: #1a2b56;
     padding: 10px 24px;
     border-radius: 10px;
     text-decoration: none;
@@ -132,7 +134,7 @@ body {
 
 /* Style Tombol Daftar (Filled) */
 .btn-nav-primary {
-    background: #1A2B56;
+    background: #1a2b56;
     color: #ffffff;
     padding: 12px 24px;
     border-radius: 10px;
@@ -149,10 +151,10 @@ body {
 }
 
 .mu-container {
-    width: 90%;             /* Menggunakan 90% lebar layar pada device kecil */
-    max-width: 1200px;      /* Batas maksimal lebar konten pada layar besar */
-    margin: 0 auto;         /* Memastikan container selalu di tengah */
-    padding: 0 20px;        /* Jarak aman tambahan di kiri & kanan */
+    width: 90%; /* Menggunakan 90% lebar layar pada device kecil */
+    max-width: 1200px; /* Batas maksimal lebar konten pada layar besar */
+    margin: 0 auto; /* Memastikan container selalu di tengah */
+    padding: 0 20px; /* Jarak aman tambahan di kiri & kanan */
 }
 
 /* Pastikan wrapper navbar menggunakan flex untuk menyebar konten */
@@ -201,8 +203,8 @@ body {
     width: 100%;
     height: 100%;
     background: linear-gradient(
-        180deg, 
-        rgba(26, 43, 86, 0.8) 0%, 
+        180deg,
+        rgba(26, 43, 86, 0.8) 0%,
         rgba(26, 43, 86, 0.4) 100%
     );
     z-index: 2;
@@ -248,7 +250,7 @@ body {
 
 /* Garis bawah kuning di bawah kata Juara */
 .highlight-yellow::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 5px;
     left: 0;
@@ -273,4 +275,153 @@ body {
     font-size: 18px;
     text-decoration: none;
     display: inline-block;
+}
+
+/* FOOTER */
+.mu-footer {
+    background-color: #0f172a; /* Warna Navy gelap sesuai gambar */
+    color: #cbd5e1; /* Warna teks abu-abu terang */
+    padding-top: 60px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 40px;
+    padding-bottom: 50px;
+}
+
+.footer-title {
+    color: var(--mu-yellow, #f5eb5e);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* Kolom Brand */
+.footer-desc {
+    line-height: 1.6;
+    margin-bottom: 25px;
+    font-size: 15px;
+    color: #e2e8f0;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 12px;
+}
+
+.footer-socials a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #1e293b; /* Warna box abu-abu gelap */
+    color: #ffffff;
+    border-radius: 8px; /* Sudut agak kotak seperti di gambar */
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.footer-socials a:hover {
+    background-color: var(--mu-navy, #1a2b56);
+}
+
+/* Kolom Links (Quick Links & Program) */
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 16px;
+}
+
+.footer-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+/* Kolom Kontak */
+.footer-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-contact li {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+    font-size: 15px;
+    color: #cbd5e1;
+}
+
+.contact-icon {
+    color: #d946ef; /* Warna ungu/magenta sesuai desain */
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Footer Bottom (Copyright) */
+.footer-bottom {
+    border-top: 1px solid #1e293b;
+    padding: 24px 0;
+}
+
+.bottom-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.copyright {
+    color: #94a3b8;
+}
+
+.policy-links {
+    display: flex;
+    gap: 20px;
+}
+
+.policy-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.policy-links a:hover {
+    color: #ffffff;
+}
+
+/* Responsivitas untuk layar kecil */
+@media (max-width: 992px) {
+    .footer-top {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-top {
+        grid-template-columns: 1fr;
+    }
+
+    .bottom-wrapper {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
 }

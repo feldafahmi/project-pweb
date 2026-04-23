@@ -11,8 +11,8 @@ Route::get('/', function () {
 });
 
 Route::get('/about', function () {
-    return view('about');
-});
+    return view('about'); 
+})->name('about');
 
 // Route::get('/blog', function () {
 //     return view('blog');
@@ -26,10 +26,12 @@ Route::get('/product', function () {
     return view('product');
 });
 
-Route::get('/login-page', function () {
-    return view('masuk');
-});
+// 1. Pastikan ada fungsi ->name('login')
+Route::get('/login', function () {
+    return view('login'); // sesuaikan dengan folder file kamu
+})->name('login');
 
-Route::get('/sign-in-page', function () {
-    return view('sign-in-page');
-});
+// 2. Lakukan hal yang sama untuk register agar tidak error nanti
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
