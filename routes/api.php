@@ -18,8 +18,15 @@ use App\Http\Controllers\VideoController;
 // Route::apiResource('videos', VideoController::class);
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompetitionController;
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Public endpoints
+Route::get('/competitions', [CompetitionController::class, 'index']);
+Route::get('/competitions/{id}', [CompetitionController::class, 'show']);
+
 // Route terproteksi (harus membawa token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
