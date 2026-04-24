@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory; // 1. Tambahkan import ini
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // Penting untuk fitur Mobile nantinya
+use Laravel\Sanctum\HasApiTokens; 
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    // 2. Tambahkan HasFactory di dalam sini
+    use HasApiTokens, HasFactory, Notifiable; 
 
-    protected $table = 'USERS'; // Sesuaikan dengan nama tabel di SQL 
-    protected $primaryKey = 'id'; // Ubah dari ID_USERS ke id
-    public $timestamps = true;    // Di Tinker ada created_at, jadi ini set true
+    // 3. Ubah USERS menjadi users (huruf kecil). 
+    // Di log migrasi sebelumnya, Laravel membuat tabel dengan nama huruf kecil.
+    protected $table = 'users'; 
+    protected $primaryKey = 'id'; 
+    public $timestamps = true;    
 
     protected $fillable = [
         'name',
