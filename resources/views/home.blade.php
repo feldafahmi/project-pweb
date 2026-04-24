@@ -140,19 +140,115 @@
         <div class="marquee-container">
             <div class="marquee-content">
 
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/google.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/Nvidia_logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/Spongebob-sangar.jpg') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/unair-horisontal.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/BGN_LOGO.png') }}" alt="Logo Company" class="company-logo">
 
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
-                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/google.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/Nvidia_logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/Spongebob-sangar.jpg') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/unair-horisontal.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/BGN_LOGO.png') }}" alt="Logo Company" class="company-logo">
 
             </div>
         </div>
     </section>
+    <!-- AKHIR FEATURES SECTION logo alumni -->
+
+    <!-- TESTIMONI SECTION -->
+    <section class="testimonials-section mu-container">
+        <div class="section-header text-center" style="margin-bottom: 50px;">
+            <h2 style="color: var(--mu-navy); font-size: 32px; font-weight: 800; margin-bottom: 10px;">
+                Mereka Telah Membuktikannya
+            </h2>
+            <p style="color: var(--mu-gray); font-size: 16px;">
+                Cerita sukses dari ribuan mahasiswa yang telah meraih prestasi bersama MARK-UP
+            </p>
+        </div>
+
+        <div class="testimonials-grid">
+
+            <div class="testimonial-card">
+                <i class="fa-solid fa-quote-left quote-icon"></i>
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                        class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="review-text">
+                    "MARK-UP benar-benar mengubah cara saya approach business cases. Mentoring dari praktisi BCG sangat
+                    membantu saya meraih juara 1 di kompetisi nasional. Materinya applicable dan mentornya sangat
+                    supportive!"
+                </p>
+                <hr class="card-divider">
+                <div class="user-profile">
+                    <img src="{{ asset('img/4622.jpg') }}" alt="Anastasia" class="user-avatar">
+                    <div class="user-info">
+                        <h4>Anastasia Putri</h4>
+                        <p>Universitas Indonesia</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <i class="fa-solid fa-quote-left quote-icon"></i>
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                        class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="review-text">
+                    "Program Career Mentoring di MARK-UP luar biasa! Saya berhasil diterima di Big 4 consulting firm berkat
+                    persiapan interview dan CV review yang detail. Investment terbaik untuk karir saya."
+                </p>
+                <hr class="card-divider">
+                <div class="user-profile">
+                    <img src="{{ asset('img/4620.jpg') }}" alt="Ryan" class="user-avatar">
+                    <div class="user-info">
+                        <h4>Ryan Mahendra</h4>
+                        <p>Institut Teknologi Bandung</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <i class="fa-solid fa-quote-left quote-icon"></i>
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                        class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="review-text">
+                    "Framework dan case studies yang diajarkan sangat komprehensif. Dalam 2 bulan, tim saya berhasil juara
+                    di 3 kompetisi berbeda. Highly recommended untuk semua business students!"
+                </p>
+                <hr class="card-divider">
+                <div class="user-profile">
+                    <img src="{{ asset('img/4623.jpg') }}" alt="Michelle" class="user-avatar">
+                    <div class="user-info">
+                        <h4>Michelle Tan</h4>
+                        <p>Universitas Gadjah Mada</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="stats-banner">
+            <div class="stat-item">
+                <h3>4.9/5.0</h3>
+                <p>Average Rating</p>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <h3>850+</h3>
+                <p>Total Reviews</p>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <h3>98%</h3>
+                <p>Would Recommend</p>
+            </div>
+        </div>
+    </section>
+    <!-- AKHIR TESTIMONI SECTION -->
 @endsection

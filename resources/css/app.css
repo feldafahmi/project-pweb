@@ -615,7 +615,7 @@ body {
     align-items: center;
     gap: 60px; /* Jarak antar logo */
     /* Animasi: nama animasi, durasi, kecepatan konstan, berulang tak terhingga */
-    animation: scroll-left 30s linear infinite;
+    animation: scroll-left 25s linear infinite;
 }
 
 /* Berhenti bergerak jika pengguna menaruh kursor di atas logo */
@@ -625,10 +625,10 @@ body {
 
 /* Styling ukuran logo */
 .company-logo {
-    height: 50px; /* Sesuaikan dengan ukuran logo kamu */
+    height: 70px; /* Sesuaikan dengan ukuran logo */
     width: auto;
     object-fit: contain;
-    filter: grayscale(100%); /* Membuat logo jadi abu-abu/hitam putih */
+    /* filter: grayscale(100%);  Membuat logo jadi abu-abu/hitam putih */
     opacity: 0.6;
     transition: all 0.3s ease;
 }
@@ -657,5 +657,146 @@ body {
     }
     .marquee-content {
         gap: 40px;
+    }
+}
+
+/* ====================
+   TESTIMONIALS SECTION
+   ==================== */
+.testimonials-section {
+    padding: 80px 20px 100px;
+    background-color: #fafafa; /* Abu-abu sangat terang untuk membedakan dengan section atasnya */
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* Styling Kartu */
+.testimonial-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+}
+
+.quote-icon {
+    font-size: 40px;
+    color: transparent;
+    -webkit-text-stroke: 2px #f0abfc; /* Efek outline warna pink/ungu muda seperti di desain */
+    margin-bottom: 15px;
+}
+
+.stars {
+    color: #facc15; /* Kuning khas bintang rating */
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 4px;
+}
+
+.review-text {
+    color: var(--mu-gray, #64748b);
+    font-size: 15px;
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 25px;
+    flex-grow: 1; /* Mendorong profil user ke bawah agar rata */
+}
+
+.card-divider {
+    border: none;
+    border-top: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+}
+
+/* Styling Profil User */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d946ef; /* Border ungu mengelilingi foto */
+}
+
+.user-info h4 {
+    color: var(--mu-navy, #1a2b56);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.user-info p {
+    color: var(--mu-gray, #64748b);
+    font-size: 12px;
+    margin: 0;
+}
+
+/* ==================================
+   STATS BANNER (Banner Rating Bawah)
+   ================================== */
+.stats-banner {
+    max-width: 800px;
+    margin: 0 auto;
+    background: linear-gradient(
+        to right,
+        #fdf4f9,
+        #fefce8
+    ); /* Gradien soft pink ke soft yellow */
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 30px 20px;
+    border: 1px solid #fef08a;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-item h3 {
+    color: #c026d3; /* Warna ungu magenta untuk angka */
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.stat-item p {
+    color: var(--mu-gray, #64748b);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 50px;
+    background-color: #e2e8f0; /* Garis vertikal pemisah */
+}
+
+/* Responsivitas untuk layar kecil */
+@media (max-width: 768px) {
+    .stats-banner {
+        flex-direction: column;
+        gap: 20px;
+        padding: 40px 20px;
+    }
+
+    .stat-divider {
+        width: 50px;
+        height: 1px;
     }
 }
