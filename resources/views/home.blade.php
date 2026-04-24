@@ -125,4 +125,34 @@
         </div>
     </section>
     <!-- AKHIR FEATURES SECTION Mengapa Memilih MARK-UP -->
+
+    <!-- FEATURES SECTION logo alumni -->
+    <section class="alumni-section mu-container">
+        <div class="section-header text-center" style="text-align: center; margin-bottom: 40px;">
+            <h2 style="color: var(--mu-navy); font-size: 28px; font-weight: 800; margin-bottom: 10px;">
+                Dipercaya oleh Alumni dari Top Companies
+            </h2>
+            <p style="color: var(--mu-gray); font-size: 16px;">
+                Mentor dan alumni kami bekerja di perusahaan-perusahaan terkemuka dunia
+            </p>
+        </div>
+
+        <div class="marquee-container">
+            <div class="marquee-content">
+
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+                <img src="{{ asset('img/placeholder-logo.png') }}" alt="Logo Company" class="company-logo">
+
+            </div>
+        </div>
+    </section>
 @endsection

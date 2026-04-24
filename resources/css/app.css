@@ -571,3 +571,91 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===============================
+   ALUMNI COMPANIES MARQUEE STYLES
+   =============================== */
+.alumni-section {
+    padding: 60px 20px 100px;
+    background-color: #ffffff;
+    overflow: hidden; /* Mencegah munculnya scrollbar horizontal bawah */
+}
+
+.marquee-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    padding: 20px 0;
+}
+
+/* Efek gradient putih di kiri dan kanan agar logo muncul perlahan */
+.marquee-container::before,
+.marquee-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 100px; /* Lebar gradient */
+    height: 100%;
+    z-index: 2;
+}
+
+.marquee-container::before {
+    left: 0;
+    background: linear-gradient(to right, white, transparent);
+}
+
+.marquee-container::after {
+    right: 0;
+    background: linear-gradient(to left, white, transparent);
+}
+
+.marquee-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 60px; /* Jarak antar logo */
+    /* Animasi: nama animasi, durasi, kecepatan konstan, berulang tak terhingga */
+    animation: scroll-left 30s linear infinite;
+}
+
+/* Berhenti bergerak jika pengguna menaruh kursor di atas logo */
+.marquee-content:hover {
+    animation-play-state: paused;
+}
+
+/* Styling ukuran logo */
+.company-logo {
+    height: 50px; /* Sesuaikan dengan ukuran logo kamu */
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(100%); /* Membuat logo jadi abu-abu/hitam putih */
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+/* Logo berwarna saat di-hover */
+.company-logo:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+/* KEYFRAMES ANIMASI BERGERAK KE KIRI */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Menggeser ke kiri sebesar setengah dari total lebar konten (karena logonya digandakan) */
+        transform: translateX(calc(-50% - 30px));
+    }
+}
+
+/* Responsivitas untuk mobile */
+@media (max-width: 768px) {
+    .company-logo {
+        height: 35px;
+    }
+    .marquee-content {
+        gap: 40px;
+    }
+}
