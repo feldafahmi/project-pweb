@@ -8,11 +8,25 @@ use Illuminate\Http\Request;
 class MentorController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET /api/mentors
+     *
+     * Query params:
+     *   available (0|1, optional) – filter ketersediaan mentor
+     *   limit     (int, default 10)
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Mentor::query();
+
+        if ($request->filled('available')) {
+            $query->where('available', $request->boolean('available'));
+        }
+
+        $limit = (int) $request->input('limit', 10);
+
+        return response()->json([
+            'data' => $query->limit($limit)->get(),
+        ]);
     }
 
     /**
