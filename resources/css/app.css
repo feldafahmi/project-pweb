@@ -27,7 +27,9 @@ body {
     font-family: var(--font-main);
 }
 
-/* NAVBAR */
+/* ============== 
+   NAVBAR 
+   ============== */
 /* Container Utama Navbar */
 .mu-nav {
     height: 85px;
@@ -222,119 +224,9 @@ body {
     transform: rotate(180deg);
 }
 
-/* ==== HERO SECTION ==== */
-.hero-section {
-    position: relative;
-    height: 100vh;
-    min-height: 700px;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--mu-navy); /* Background cadangan */
-}
-
-/* Layer 1: Gambar SVG */
-.hero-bg-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-.hero-bg-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Menjaga proporsi SVG agar tidak melar */
-    object-position: center;
-}
-
-/* Layer 2: Overlay Navy Transparan (Kunci teks terbaca) */
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        180deg,
-        rgba(26, 43, 86, 0.8) 0%,
-        rgba(26, 43, 86, 0.4) 100%
-    );
-    z-index: 2;
-}
-
-/* Layer 3: Konten Teks */
-.hero-content {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    color: var(--mu-white);
-    max-width: 900px;
-    padding: 0 20px;
-}
-
-.hero-content h1 {
-    font-size: clamp(60px, 12vw, 140px); /* Ukuran "MARK-UP" raksasa */
-    font-weight: 900;
-    line-height: 0.9;
-    margin-bottom: 10px;
-    letter-spacing: -3px;
-    text-transform: uppercase;
-}
-
-.hero-tagline {
-    font-size: clamp(24px, 4vw, 42px);
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-.hero-description {
-    font-size: 18px;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
-    max-width: 700px;
-    margin: 0 auto 35px;
-}
-
-.highlight-yellow {
-    color: var(--mu-yellow);
-    position: relative;
-}
-
-/* Garis bawah kuning di bawah kata Juara */
-.highlight-yellow::after {
-    content: "";
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: var(--mu-yellow);
-}
-
-.btn-outline-navy {
-    border: 2px solid var(--mu-navy);
-    color: var(--mu-navy);
-}
-.btn-navy {
-    background: var(--mu-navy);
-}
-.btn-yellow-cta {
-    background: var(--mu-yellow);
-    color: var(--mu-navy);
-    font-weight: 700;
-    padding: 15px 40px;
-    border-radius: 8px;
-    font-size: 18px;
-    text-decoration: none;
-    display: inline-block;
-}
-
-/* FOOTER */
+/* ====== 
+   FOOTER 
+   ====== */
 .mu-footer {
     background-color: #0f172a; /* Warna Navy gelap sesuai gambar */
     color: #cbd5e1; /* Warna teks abu-abu terang */
@@ -480,5 +372,202 @@ body {
         flex-direction: column;
         text-align: center;
         gap: 15px;
+    }
+}
+
+/* ============ 
+   HERO SECTION 
+   ============ */
+.hero-section {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mu-navy); /* Background cadangan */
+}
+
+/* Layer 1: Gambar SVG */
+.hero-bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-bg-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Menjaga proporsi SVG agar tidak melar */
+    object-position: center;
+}
+
+/* Layer 2: Overlay Navy Transparan (Kunci teks terbaca) */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        180deg,
+        rgba(26, 43, 86, 0.8) 0%,
+        rgba(26, 43, 86, 0.4) 100%
+    );
+    z-index: 2;
+}
+
+/* Layer 3: Konten Teks */
+.hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    color: var(--mu-white);
+    max-width: 900px;
+    padding: 0 20px;
+}
+
+.hero-content h1 {
+    font-size: clamp(60px, 12vw, 140px); /* Ukuran "MARK-UP" raksasa */
+    font-weight: 900;
+    line-height: 0.9;
+    margin-bottom: 10px;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+}
+
+.hero-tagline {
+    font-size: clamp(24px, 4vw, 42px);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.hero-description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 700px;
+    margin: 0 auto 35px;
+}
+
+.highlight-yellow {
+    color: var(--mu-yellow);
+    position: relative;
+}
+
+/* Garis bawah kuning di bawah kata Juara */
+.highlight-yellow::after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--mu-yellow);
+}
+
+.btn-outline-navy {
+    border: 2px solid var(--mu-navy);
+    color: var(--mu-navy);
+}
+.btn-navy {
+    background: var(--mu-navy);
+}
+.btn-yellow-cta {
+    background: var(--mu-yellow);
+    color: var(--mu-navy);
+    font-weight: 700;
+    padding: 15px 40px;
+    border-radius: 8px;
+    font-size: 18px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* ======================================== 
+   FEATURES SECTION Mengapa Memilih MARK-UP 
+   ======================================== */
+.features-section {
+    padding: 100px 20px;
+    background-color: #fafafa; /* Warna abu-abu sangat muda biar beda dengan putihnya form */
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.feature-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 35px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f5f9;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.feature-icon {
+    width: 55px;
+    height: 55px;
+    background: #9333ea; /* Warna ungu ikon */
+    color: white;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 25px;
+}
+
+.feature-card h3 {
+    color: var(--mu-navy, #1a2b56);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    color: var(--mu-gray, #64748b);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.feature-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag {
+    background: #fef9c3; /* Warna kuning pudar */
+    color: #854d0e; /* Warna teks kuning gelap/coklat agar terbaca */
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+/* Responsivitas untuk mobile */
+@media (max-width: 768px) {
+    .features-section {
+        padding: 60px 20px;
+    }
+    .features-grid {
+        grid-template-columns: 1fr;
     }
 }
