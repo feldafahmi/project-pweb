@@ -46,11 +46,35 @@ class MentorController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * GET /api/mentors/{mentor}
+     *
+     * Return single mentor lengkap dengan slots (yang available),
+     * reviews, plus rating_distribution & total_reviews.
      */
     public function show(Mentor $mentor)
     {
-        //
+        $mentor->load([
+            'slots'   => fn ($q) => $q->limit(10),
+            'reviews' => fn ($q) => $q->limit(10),
+        ]);
+
+        $allReviews = $mentor->reviews()->get();
+        $totalReviews = $allReviews->count();
+
+        $distribution = collect([5, 4, 3, 2, 1])->map(function ($s) use ($allReviews, $totalReviews) {
+            if ($totalReviews === 0) {
+                return 0;
+            }
+            $count = $allReviews->where('stars', $s)->count();
+            return (int) round(($count / $totalReviews) * 100);
+        })->values();
+
+        return response()->json([
+            'data' => array_merge($mentor->toArray(), [
+                'rating_distribution' => $distribution,
+                'total_reviews'       => $totalReviews,
+            ]),
+        ]);
     }
 
     /**

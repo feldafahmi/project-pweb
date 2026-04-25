@@ -19,6 +19,8 @@ use App\Http\Controllers\VideoController;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompetitionController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\MentorController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -30,4 +32,10 @@ Route::get('/competitions/{id}', [CompetitionController::class, 'show']);
 // Route terproteksi (harus membawa token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/{product}', [ProductController::class, 'show']);
+
+    Route::get('/mentors', [MentorController::class, 'index']);
+    Route::get('/mentors/{mentor}', [MentorController::class, 'show']);
 });
