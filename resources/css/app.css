@@ -800,3 +800,183 @@ body {
         height: 1px;
     }
 }
+
+/* ==============
+   HALAMAN PRODUK
+   ============== */
+
+/* Breadcrumb */
+.breadcrumb-custom {
+    font-size: 13px;
+    color: var(--mu-gray, #64748b);
+    display: flex;
+    align-items: center;
+}
+.breadcrumb-custom a {
+    color: var(--mu-navy, #1a2b56);
+    text-decoration: none;
+}
+.breadcrumb-custom .current-page {
+    color: var(--mu-gray);
+}
+
+/* Hero Produk */
+.produk-hero {
+    position: relative;
+    height: 500px;
+    display: flex;
+    align-items: center; /* Centering Vertikal */
+    justify-content: center; /* Centering Horizontal untuk kontainer */
+    margin-bottom: 40px;
+}
+.produk-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: #1e293b; /* Warna dasar kalau gambar belum diload */
+}
+.hero-img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.hero-overlay-dark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Efek gelap agar teks putih terbaca */
+}
+.produk-hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    padding: 0 20px;
+    text-align: center;
+}
+.produk-hero-content h1 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+.produk-hero-content p {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+/* Filter Produk (Pills) */
+.produk-filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+.filter-pill {
+    padding: 8px 24px;
+    border-radius: 50px;
+    border: none;
+    background-color: #f1f5f9;
+    color: var(--mu-navy, #1a2b56);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.filter-pill:hover {
+    background-color: #e2e8f0;
+}
+.filter-pill.active {
+    background-color: #a855f7; /* Warna ungu magenta sesuai gambar */
+    color: white;
+}
+
+/* Grid Produk */
+.produk-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 Kolom */
+    gap: 30px;
+    max-width: 1000px; /* Membatasi kelebaran agar seperti referensi */
+    margin: 0 auto;
+}
+
+/* Kartu Produk */
+.produk-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+}
+.produk-img-wrapper {
+    height: 220px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #e2e8f0; /* Placeholder warna sebelum gambar diload */
+}
+.produk-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.produk-card:hover .produk-img-wrapper img {
+    transform: scale(1.05); /* Efek zoom tipis saat kursor diarahkan */
+}
+
+/* Info di dalam Kartu */
+.produk-info {
+    padding: 24px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.produk-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--mu-navy, #1a2b56);
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+.produk-desc {
+    font-size: 13px;
+    color: var(--mu-gray, #64748b);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+/* Harga */
+.produk-price-box {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+}
+.old-price {
+    font-size: 12px;
+    color: #94a3b8;
+    text-decoration: line-through;
+    margin-bottom: -2px;
+}
+.new-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #a855f7; /* Ungu terang */
+}
+
+/* Responsivitas untuk layar kecil */
+@media (max-width: 768px) {
+    .produk-grid {
+        grid-template-columns: 1fr; /* Jadi 1 kolom di HP */
+    }
+    .produk-hero h1 {
+        font-size: 28px;
+    }
+}

@@ -16,7 +16,8 @@
                     <a href="#" class="nav-link-custom">Info Lomba</a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link-custom">Produk</a>
+                    <a href="{{ route('produk') }}"
+                        class="nav-link-custom {{ request()->routeIs('produk') ? 'active' : '' }}">Produk</a>
                 </li>
                 <li class="nav-item-dropdown">
                     <a href="#" class="nav-link-custom {{ request()->routeIs('about') ? 'active' : '' }}">
