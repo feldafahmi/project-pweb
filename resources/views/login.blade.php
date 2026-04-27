@@ -1,69 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" />
-    <link rel="stylesheet" href="css/login-style.css">
-  </head>
-  <body>
-    <div class="main-container">
-      <div class="flex-column-b">
-        <div class="container"></div>
-        <div class="rectangle"><div class="container-1"></div></div>
-      </div>
-      <div class="flex-column-aab">
-        <div class="frame">
-          <div class="cuplikan-layar"></div>
-          <span class="mark-up">MARK-UP</span>
-        </div>
-        <div class="container-2">
-          <div class="heading">
-            <span class="welcome-back">Welcome Back</span>
-          </div>
-          <div class="paragraph">
-            <span class="enter-details"
-              >Welcome Back, Please enter Your details</span
-            >
-          </div>
-        </div>
-        <div class="container-3">
-          <div class="button"><span class="sign-in">Sign In</span></div>
-          <div class="signup"><span class="container-4">Signup</span></div>
-        </div>
-        <div class="group-3">
-          <div class="label">
-            <span class="email-address">Email Address</span>
-          </div>
-          <div class="container-5">
-            <div class="email-input">
-              <span class="email">iailrezamp@gmail.com</span>
+@extends('layouts.guest')
+
+@section('title', 'Masuk')
+
+@section('content')
+    {{-- Tetap gunakan h-screen dan overflow-hidden agar tidak bisa di-scroll tembus ke bawah --}}
+    <div class="flex h-screen w-full overflow-hidden bg-white">
+
+        {{-- Sisi Form (Diubah menjadi flex-col agar scroll responsif dan tidak terpotong) --}}
+        <div class="relative flex flex-1 flex-col items-center overflow-y-auto p-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+
+            {{-- Back to home --}}
+            <a href="{{ url('/') }}"
+                class="absolute left-6 top-6 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-gray-500 transition hover:bg-gray-50 hover:text-navy-600">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+
+            {{-- Menggunakan my-auto dan shrink-0 agar form selalu di tengah tapi tetap bisa di-scroll penuh jika layar sempit --}}
+            <div class="w-full max-w-sm my-auto shrink-0 py-6">
+
+                {{-- Header & Logo (Rata Tengah) --}}
+                <div class="mb-8 flex flex-col items-center text-center">
+                    <a href="{{ url('/') }}" class="mb-6 flex items-center gap-2 text-xl font-extrabold text-navy-800">
+                        <img src="{{ asset('img/Markup-Logo.png') }}" alt="MARK-UP" class="h-8">
+                        <span>MARK-UP</span>
+                    </a>
+                    <h1 class="mb-2 text-3xl font-bold text-gray-900">Welcome Back</h1>
+                    <p class="text-sm text-gray-400">Welcome Back, Please enter Your details</p>
+                </div>
+
+                {{-- Alert area (diisi via JS) --}}
+                <div data-form-alert class="mb-5 hidden rounded-xl px-4 py-3 text-sm"></div>
+
+                {{-- Segmented Control (Sign In / Sign Up) --}}
+                <div class="mb-8 flex gap-1 rounded-2xl bg-gray-50 p-1">
+                    <a href="{{ route('login') }}"
+                        class="flex-1 rounded-xl bg-white py-2.5 text-center text-sm font-semibold text-gray-900 shadow-sm">
+                        Sign In
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="flex-1 rounded-xl py-2.5 text-center text-sm font-medium text-gray-400 transition hover:text-gray-900">
+                        Signup
+                    </a>
+                </div>
+
+                {{-- Form Utama --}}
+                <form method="POST" action="" class="space-y-5" data-auth-form="login" novalidate>
+                    @csrf
+
+                    {{-- Input Email --}}
+                    <div>
+                        <label for="email" class="mb-1.5 block text-xs font-medium text-gray-400">Email Address</label>
+                        <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
+                            data-field-wrapper>
+                            <i class="far fa-envelope text-gray-400"></i>
+                            <input type="email" id="email" name="email" required
+                                placeholder="nama@email.com"
+                                class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+                                data-validate="email"
+                                value="{{ old('email') }}">
+                            
+                            {{-- Ikon Validasi Hijau (Disembunyikan secara default) --}}
+                            <i class="fas fa-check-circle hidden text-green-500" data-valid-icon></i>
+                        </div>
+                        <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
+                    </div>
+
+                    {{-- Input Password --}}
+                    <div>
+                        <label for="password" class="mb-1.5 block text-xs font-medium text-gray-400">Password</label>
+                        <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
+                            data-field-wrapper>
+                            <i class="fas fa-lock text-gray-400"></i>
+                            <input type="password" id="password" name="password" required minlength="8"
+                                placeholder="Min. 8 karakter"
+                                class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+                                data-validate="password">
+                            
+                            {{-- PERBAIKAN: Menambahkan Ikon Validasi Hijau untuk field Password --}}
+                            <i class="fas fa-check-circle hidden text-green-500" data-valid-icon></i>
+                            
+                            <button type="button" class="text-gray-400 transition hover:text-navy-600"
+                                data-toggle-password aria-label="Tampilkan password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
+                    </div>
+
+                    {{-- UX Best Practice: Forgot Password --}}
+                    <div class="flex justify-end pt-1">
+                        <a href="#" class="text-xs font-semibold text-navy-600 hover:underline">Forgot password?</a>
+                    </div>
+
+                    {{-- Tombol Continue --}}
+                    <button type="submit" data-submit-btn
+                        class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1b42] py-3.5 text-sm font-semibold text-white transition hover:bg-navy-900 disabled:cursor-not-allowed disabled:opacity-70">
+                        <span data-btn-label>Continue</span>
+                        <i class="fas fa-circle-notch hidden animate-spin" data-btn-spinner></i>
+                    </button>
+                </form>
+
+                {{-- Social Login --}}
+                <div class="mt-8 text-center">
+                    <p class="mb-4 text-xs text-gray-400">Or Continue With</p>
+                    <div class="flex justify-center gap-4">
+                        @foreach ([
+                            ['icon' => 'https://www.svgrepo.com/show/475656/google-color.svg', 'alt' => 'Google'],
+                            ['icon' => 'https://www.svgrepo.com/show/511330/apple-173.svg', 'alt' => 'Apple'],
+                            ['icon' => 'https://www.svgrepo.com/show/475647/facebook-color.svg', 'alt' => 'Facebook'],
+                        ] as $provider)
+                            <button type="button" class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-100 bg-white shadow-sm transition hover:bg-gray-50">
+                                <img src="{{ $provider['icon'] }}" alt="{{ $provider['alt'] }}" class="h-5 w-5 object-contain">
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+
             </div>
-            <div class="container-6"><div class="icon"></div></div>
-            <div class="container-7"><div class="icon-8"></div></div>
-          </div>
         </div>
-        <div class="container-9">
-          <div class="label-a"><span class="password">Password </span></div>
-          <div class="container-b">
-            <div class="email-input-c">
-              <span class="hidden-text">********</span>
-            </div>
-            <div class="container-d"><div class="icon-e"></div></div>
-            <div class="container-f"><div class="lock-icon"></div></div>
-          </div>
+
+        {{-- Sisi Gambar (Dengan Overlay Navy) --}}
+        <div class="hidden flex-1 lg:block relative bg-slate-100">
+            {{-- Mengembalikan overlay warna navy agar serasi dengan brand --}}
+            <div class="absolute inset-0 bg-navy-800/40 mix-blend-multiply z-10"></div>
+            <img src="{{ asset('img/login.webp') }}" alt="MARK-UP Platform" class="absolute inset-0 h-full w-full object-cover z-0">
         </div>
-        <div class="button-10"><span class="continue">Continue</span></div>
-        <span class="or-continue-with">Or Continue With</span>
-        <div class="container-11">
-          <div class="button-12"><div class="icon-13"></div></div>
-          <div class="button-14"><div class="icon-15"></div></div>
-          <div class="button-16"><div class="icon-17"></div></div>
-        </div>
-      </div>
+
     </div>
-    <!-- Generated by Codia AI - https://codia.ai/ -->
-  </body>
-</html>
+@endsection
