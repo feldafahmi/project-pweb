@@ -52,8 +52,12 @@ function initAuthForms() {
             if (!input) return;
             const isPassword = input.type === "password";
             input.type = isPassword ? "text" : "password";
-            btn.querySelector("i").classList.toggle("fa-eye", !isPassword);
-            btn.querySelector("i").classList.toggle("fa-eye-slash", isPassword);
+            // FA i2svg may have replaced <i> with <svg>; query both
+            const icon = btn.querySelector("i, svg");
+            if (icon) {
+                icon.classList.toggle("fa-eye", !isPassword);
+                icon.classList.toggle("fa-eye-slash", isPassword);
+            }
         });
     });
 
@@ -61,7 +65,6 @@ function initAuthForms() {
         const mode = form.dataset.authForm;
 
         // Reset state awal
-        form.querySelectorAll("[data-valid-icon]").forEach((icon) => icon.classList.add("hidden"));
         setSubmitting(form, false);
 
         // Event listeners untuk validasi
@@ -91,19 +94,17 @@ function initAuthForms() {
 function validateField(input, form, eventType = null) {
     const wrapper = input.closest("[data-field-wrapper]");
     const errorEl = wrapper?.parentElement.querySelector("[data-field-error]");
-    const validIcon = wrapper?.querySelector("[data-valid-icon]");
     const type = input.dataset.validate;
 
-    // PERBAIKAN: Field password tidak boleh di-trim agar spasi diakui
-    const value = (type === "password" || type === "password_confirmation") 
-        ? input.value 
+    // Field password tidak di-trim agar spasi diakui
+    const value = (type === "password" || type === "password_confirmation")
+        ? input.value
         : input.value.trim();
 
     let error = "";
 
-    // Logika penentuan error
     if (!value) {
-        // PERBAIKAN: Error kosong hanya muncul saat blur (pindah field) atau submit
+        // Error kosong hanya muncul saat blur (pindah field) atau submit
         if (eventType === "blur" || !eventType) {
             error = "Field ini wajib diisi";
         }
@@ -117,33 +118,23 @@ function validateField(input, form, eventType = null) {
         if (!value) error = "Pilih role terlebih dahulu";
     } else if (type === "password_confirmation") {
         const pw = form.querySelector('[data-validate="password"]')?.value || "";
-        if (value !== pw) {
-            error = "Password tidak cocok";
-        }
+        if (value !== pw) error = "Password tidak cocok";
     }
 
-    setFieldState(wrapper, errorEl, validIcon, error, value);
-    
-    // Kembalikan status valid (true) hanya jika tidak ada error DAN field sudah terisi
+    setFieldState(wrapper, errorEl, error);
+
     return !error && value.length > 0;
 }
 
-function setFieldState(wrapper, errorEl, validIcon, error, value = "") {
+function setFieldState(wrapper, errorEl, error) {
     if (!wrapper) return;
 
-    // Tambahkan style error hanya jika ada pesan error
     wrapper.classList.toggle("border-red-400", !!error);
     wrapper.classList.toggle("border-gray-200", !error);
 
     if (errorEl) {
         errorEl.textContent = error;
         errorEl.classList.toggle("hidden", !error);
-    }
-
-    if (validIcon) {
-        // Ikon hijau hanya tampil jika tidak ada error DAN value tidak kosong
-        const shouldShow = !error && value.length > 0;
-        validIcon.classList.toggle("hidden", !shouldShow);
     }
 }
 
@@ -255,7 +246,10 @@ function initNavbarAuthState() {
                         <p class="truncate text-sm font-bold text-navy-600">${escapeHtml(user.name)}</p>
                         <p class="truncate text-xs text-slate-500">${escapeHtml(user.email)}</p>
                     </div>
-                    <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-navy-600">Profil Saya</a>
+                    <a href="/dashboard" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-navy-600">
+                        <i class="fas fa-th-large mr-2 text-slate-400"></i>Dashboard
+                    </a>
+                    <div class="my-1 border-t border-slate-100"></div>
                     <button type="button" data-logout class="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">
                         <i class="fas fa-sign-out-alt mr-2"></i>Keluar
                     </button>
