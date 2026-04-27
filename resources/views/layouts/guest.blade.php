@@ -14,7 +14,7 @@
 
     <script src="https://kit.fontawesome.com/bba1f9c6ae.js" crossorigin="anonymous"></script>
 
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="min-h-screen bg-white antialiased">

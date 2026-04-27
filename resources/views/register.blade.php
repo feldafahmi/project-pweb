@@ -59,7 +59,6 @@
                                 class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
                                 data-validate="name"
                                 value="{{ old('name') }}">
-                            <i class="fas fa-check-circle hidden text-green-500" data-valid-icon></i>
                         </div>
                         <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
                     </div>
@@ -75,7 +74,6 @@
                                 class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
                                 data-validate="email"
                                 value="{{ old('email') }}">
-                            <i class="fas fa-check-circle hidden text-green-500" data-valid-icon></i>
                         </div>
                         <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
                     </div>
@@ -92,8 +90,6 @@
                                 <option value="student">Student</option>
                                 <option value="mentor">Mentor</option>
                             </select>
-                            {{-- Ditambahkan ikon validasi untuk Role --}}
-                            <i class="fas fa-check-circle hidden text-green-500" data-valid-icon></i>
                         </div>
                         <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
                     </div>
@@ -108,10 +104,6 @@
                                 placeholder="Min. 8 karakter" minlength="8"
                                 class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
                                 data-validate="password">
-                            
-                            {{-- Ditambahkan ikon validasi untuk Password --}}
-                            <i class="fas fa-check-circle hidden text-green-500" data-valid-icon></i>
-                            
                             <button type="button" class="text-gray-400 transition hover:text-navy-600"
                                 data-toggle-password aria-label="Tampilkan password">
                                 <i class="fas fa-eye"></i>
@@ -137,7 +129,6 @@
                                 placeholder="Ulangi sandi" minlength="8"
                                 class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
                                 data-validate="password_confirmation">
-                            <i class="fas fa-check-circle hidden text-green-500" data-valid-icon></i>
                         </div>
                         <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
                     </div>
@@ -145,7 +136,9 @@
                     <button type="submit" data-submit-btn
                         class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1b42] py-3.5 text-sm font-semibold text-white transition hover:bg-navy-900 disabled:cursor-not-allowed disabled:opacity-70">
                         <span data-btn-label>Create Account</span>
-                        <i class="fas fa-circle-notch hidden animate-spin" data-btn-spinner></i>
+                        <span class="hidden" data-btn-spinner>
+                            <i class="fas fa-circle-notch animate-spin"></i>
+                        </span>
                     </button>
                 </form>
 
