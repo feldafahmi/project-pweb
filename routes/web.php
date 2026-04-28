@@ -19,3 +19,10 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::view('/password', 'dashboard.profile.password')->name('password');
     });
 });
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::redirect('/', '/admin/products');
+    Route::view('/products', 'admin.products.index')->name('products.index');
+    Route::view('/competitions', 'admin.competitions.index')->name('competitions.index');
+    Route::view('/users', 'admin.users.index')->name('users.index');
+});
