@@ -44,7 +44,23 @@
     .btn-yellow {
         @apply inline-flex items-center justify-center rounded-lg bg-yellow-brand px-10 py-4 text-lg font-bold text-navy-600 transition hover:-translate-y-0.5 hover:bg-yellow-brand-dark hover:shadow-lg;
     }
+
+    /* Shared admin form control styling — kept in 1 place to stay DRY */
+    .admin-input,
+    .admin-input-select {
+        @apply w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-600;
+    }
+
+    .admin-input-select {
+        @apply appearance-none bg-no-repeat pr-10;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+        background-position: right 0.75rem center;
+        background-size: 1.25rem;
+    }
 }
+
+/* Hide elements with x-cloak until Alpine processes them */
+[x-cloak] { display: none !important; }
 
 @layer utilities {
     .marquee-track {

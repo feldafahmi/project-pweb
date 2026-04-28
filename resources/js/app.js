@@ -2,6 +2,13 @@ import "./bootstrap";
 
 const AUTH_STORAGE_KEY = "markup.auth.user";
 
+// Dummy admin allowlist — email yang dianggap admin saat login mode demo.
+const ADMIN_EMAILS = ["admin@markup.id", "admin@admin.com"];
+
+function isAdminEmail(email) {
+    return ADMIN_EMAILS.includes(String(email).trim().toLowerCase());
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initMobileMenu();
     initProductFilters();
@@ -173,21 +180,34 @@ function handleAuthSubmit(form, mode) {
     setTimeout(() => {
         try {
             const data = Object.fromEntries(new FormData(form).entries());
+            const isAdmin = mode === "login" && isAdminEmail(data.email);
+
             const user = {
-                name: data.name || data.email.split("@")[0],
+                name: isAdmin
+                    ? "Admin MARK-UP"
+                    : (data.name || data.email.split("@")[0]),
                 email: data.email,
-                role: data.role || "student",
+                role: isAdmin ? "admin" : (data.role || "student"),
                 token: "dummy-" + Math.random().toString(36).slice(2, 10),
                 issuedAt: Date.now(),
             };
             localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
 
-            const flash = mode === "login"
-                ? `Selamat datang kembali, ${user.name}!`
-                : `Akun berhasil dibuat. Selamat datang, ${user.name}!`;
+            let flash;
+            let redirect;
+            if (isAdmin) {
+                flash = `Selamat datang, ${user.name}! Anda masuk sebagai Admin.`;
+                redirect = "/admin/products";
+            } else if (mode === "login") {
+                flash = `Selamat datang kembali, ${user.name}!`;
+                redirect = "/";
+            } else {
+                flash = `Akun berhasil dibuat. Selamat datang, ${user.name}!`;
+                redirect = "/";
+            }
             sessionStorage.setItem("markup.flash", flash);
 
-            window.location.href = "/";
+            window.location.href = redirect;
         } catch (err) {
             console.error("[auth] login failed", err);
             setSubmitting(form, false);
@@ -233,22 +253,33 @@ function initNavbarAuthState() {
     try {
         const user = JSON.parse(userJson);
         const initials = user.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+        const isAdmin = user.role === "admin";
+
+        const dashboardLink = isAdmin
+            ? `<a href="/admin/products" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-navy-600">
+                    <i class="fas fa-shield-halved mr-2 text-orange-500"></i>Admin Panel
+                </a>`
+            : `<a href="/dashboard" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-navy-600">
+                    <i class="fas fa-th-large mr-2 text-slate-400"></i>Dashboard
+                </a>`;
+
+        const roleBadge = isAdmin
+            ? `<span class="ml-2 rounded-full bg-orange-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-orange-700">Admin</span>`
+            : "";
 
         authSlot.innerHTML = `
             <div class="group relative">
                 <button type="button" class="flex items-center gap-2 rounded-full border border-slate-200 px-1.5 py-1.5 pr-3 transition hover:bg-slate-50">
-                    <span class="flex h-7 w-7 items-center justify-center rounded-full bg-navy-600 text-xs font-bold text-white">${escapeHtml(initials)}</span>
+                    <span class="flex h-7 w-7 items-center justify-center rounded-full ${isAdmin ? 'bg-orange-500' : 'bg-navy-600'} text-xs font-bold text-white">${escapeHtml(initials)}</span>
                     <span class="hidden text-sm font-semibold text-navy-600 sm:inline">${escapeHtml(user.name)}</span>
                     <i class="fas fa-chevron-down text-[10px] text-slate-400"></i>
                 </button>
-                <div class="invisible absolute right-0 top-full z-50 mt-1 w-52 translate-y-2 rounded-xl border border-slate-100 bg-white py-2 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                <div class="invisible absolute right-0 top-full z-50 mt-1 w-56 translate-y-2 rounded-xl border border-slate-100 bg-white py-2 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                     <div class="border-b border-slate-100 px-4 pb-2 pt-1">
-                        <p class="truncate text-sm font-bold text-navy-600">${escapeHtml(user.name)}</p>
+                        <p class="truncate text-sm font-bold text-navy-600">${escapeHtml(user.name)}${roleBadge}</p>
                         <p class="truncate text-xs text-slate-500">${escapeHtml(user.email)}</p>
                     </div>
-                    <a href="/dashboard" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-navy-600">
-                        <i class="fas fa-th-large mr-2 text-slate-400"></i>Dashboard
-                    </a>
+                    ${dashboardLink}
                     <div class="my-1 border-t border-slate-100"></div>
                     <button type="button" data-logout class="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">
                         <i class="fas fa-sign-out-alt mr-2"></i>Keluar
