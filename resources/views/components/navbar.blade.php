@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('about.mentor') }}"
                             class="block px-6 py-2.5 text-sm font-semibold text-slate-500 transition-all hover:bg-slate-50 hover:pl-8 hover:text-navy-600">
                             Profil Mentor
                         </a>
