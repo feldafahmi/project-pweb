@@ -49,7 +49,7 @@
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
             {{-- Card Lomba 1 --}}
-            <div onclick="openLombaModal('National Business Case Competition', 'Oleh FEB Universitas Indonesia', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com')"
+            <div onclick="openLombaModal('National Business Case Competition', 'Oleh FEB Universitas Indonesia', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com', '{{ asset('img/dreamcareer.jpeg') }}')"
                 class="group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
 
                 <div class="relative h-48 w-full overflow-hidden bg-slate-200">
@@ -79,11 +79,11 @@
             {{-- Copy Card di atas untuk lomba lainnya... --}}
 
             {{-- Card Lomba 2 --}}
-            <div onclick="openLombaModal('National Business Case Competition', 'Oleh FEB Universitas Indonesia', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com')"
+            <div onclick="openLombaModal('HSBC MACAU Business Case Competition', 'Oleh University of Macau', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com', '{{ asset('img/hsbc.png') }}')"
                 class="group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
 
                 <div class="relative h-48 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/dreamcareer.jpeg') }}"
+                    <img src="{{ asset('img/hsbc.png') }}"
                         class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
                     {{-- Badge Deadline --}}
                     <div
@@ -123,7 +123,7 @@
 
             {{-- Modal Image Side --}}
             <div class="h-56 w-full bg-slate-200 md:h-auto md:w-5/12">
-                <img src="{{ asset('img/dreamcareer.jpeg') }}" alt="Detail Lomba" class="h-full w-full object-cover">
+                <img id="modalLombaImage" src="" alt="Detail Lomba" class="h-full w-full object-cover">
             </div>
 
             {{-- Modal Content Side --}}
@@ -171,13 +171,14 @@
          */
         const modal = document.getElementById('lombaModal');
 
-        function openLombaModal(title, organizer, deadline, desc, link) {
+        function openLombaModal(title, organizer, deadline, desc, link, imageSrc) {
             // Isi data ke dalam modal
             document.getElementById('modalLombaTitle').innerText = title;
             document.getElementById('modalLombaOrg').innerText = organizer;
             document.getElementById('modalLombaDeadline').innerText = deadline;
             document.getElementById('modalLombaDesc').innerText = desc;
             document.getElementById('modalLombaLink').href = link;
+            document.getElementById('modalLombaImage').src = imageSrc;
 
             // Tampilkan modal
             modal.classList.remove('hidden');
