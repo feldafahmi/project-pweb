@@ -22,6 +22,7 @@
     @php
         $sidebarLinks = [
             ['route' => 'dashboard.index', 'label' => 'Produk Saya', 'icon' => 'fa-cube'],
+            ['route' => 'dashboard.cart', 'label' => 'Keranjang', 'icon' => 'fa-shopping-cart'], // <-- TAMBAHKAN INI
             ['route' => 'dashboard.transactions', 'label' => 'Riwayat Pembelian', 'icon' => 'fa-receipt'],
             [
                 'route' => 'dashboard.profile.index',
@@ -65,11 +66,7 @@
             {{-- Nav --}}
             <nav class="flex-1 space-y-1 py-4 pr-4">
                 @foreach ($sidebarLinks as $link)
-                    <x-dashboard.sidebar-link
-                        :route="$link['route']"
-                        :label="$link['label']"
-                        :icon="$link['icon']"
-                        :aliases="$link['aliases'] ?? []" />
+                    <x-dashboard.sidebar-link :route="$link['route']" :label="$link['label']" :icon="$link['icon']" :aliases="$link['aliases'] ?? []" />
                 @endforeach
             </nav>
 
@@ -84,8 +81,7 @@
         </aside>
 
         {{-- Sidebar overlay (mobile) --}}
-        <div data-dashboard-overlay
-            class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden"></div>
+        <div data-dashboard-overlay class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden"></div>
 
         {{-- ============== MAIN ============== --}}
         <div class="flex w-full flex-1 flex-col lg:pl-0">
@@ -118,7 +114,7 @@
     </div>
 
     <script>
-        (function () {
+        (function() {
             const sidebar = document.querySelector('[data-dashboard-sidebar]');
             const overlay = document.querySelector('[data-dashboard-overlay]');
             const toggle = document.querySelector('[data-dashboard-toggle]');

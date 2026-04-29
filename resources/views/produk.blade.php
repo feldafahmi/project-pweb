@@ -40,8 +40,8 @@
 
         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 
-            {{-- CARD --}}
-            <div onclick="openModal()"
+            {{-- CARD 1 --}}
+            <div onclick="openModal(1, 'Bundle: Winner Class dan Module (Debate)', 'Gabungan materi Winner Class (Video on Demand) + modul eksklusif Tips & Trik Juara Lomba UI/UX yang dirancang langsung untuk kamu yang ingin menang.', '149.000', '99.000', '{{ asset('img/63815.png') }}')"
                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                 <div class="h-56 w-full overflow-hidden bg-slate-200">
                     <img src="{{ asset('img/63815.png') }}" alt="Produk 1"
@@ -61,8 +61,8 @@
                 </div>
             </div>
 
-            {{-- CARD --}}
-            <div onclick="openModal()"
+            {{-- CARD 2 --}}
+            <div onclick="openModal(2, 'Business Case Mastery Class', 'Pelajari framework top tier consulting firm (McKinsey, BCG, Bain) untuk memecahkan kasus bisnis kompleks dalam hitungan menit.', '299.000', '199.000', '{{ asset('img/63815.png') }}')"
                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                 <div class="h-56 w-full overflow-hidden bg-slate-200">
                     <img src="{{ asset('img/63815.png') }}" alt="Produk 2"
@@ -82,8 +82,8 @@
                 </div>
             </div>
 
-            {{-- CARD --}}
-            <div onclick="openModal()"
+            {{-- CARD 3 --}}
+            <div onclick="openModal(3, 'Pitch Deck Design Secrets', 'Modul komprehensif cara mendesain slide presentasi yang persuasif dan memukau dewan juri kompetisi bisnis.', '99.000', '49.000', '{{ asset('img/63815.png') }}')"
                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                 <div class="h-56 w-full overflow-hidden bg-slate-200">
                     <img src="{{ asset('img/63815.png') }}" alt="Produk 3"
@@ -103,8 +103,8 @@
                 </div>
             </div>
 
-            {{-- CARD --}}
-            <div onclick="openModal()"
+            {{-- CARD 4 --}}
+            <div onclick="openModal(4, 'Live Mentoring: Mock Interview', 'Simulasi wawancara 1-on-1 dengan mentor expert dari Big 4 Company lengkap dengan feedback tertulis.', '499.000', '349.000', '{{ asset('img/63815.png') }}')"
                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                 <div class="h-56 w-full overflow-hidden bg-slate-200">
                     <img src="{{ asset('img/63815.png') }}" alt="Produk 4"
@@ -126,6 +126,7 @@
         </div>
     </div>
 
+    {{-- MODAL PRODUK --}}
     <div id="productModal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity duration-300">
         <div class="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl md:flex-row">
@@ -136,21 +137,20 @@
             </button>
 
             <div class="h-64 w-full bg-slate-200 md:h-auto md:w-1/2">
-                <img src="{{ asset('img/63815.png') }}" alt="Detail Produk" class="h-full w-full object-cover">
+                <img id="modalProdImage" src="" alt="Detail Produk" class="h-full w-full object-cover">
             </div>
 
             <div class="flex w-full flex-col justify-between p-6 md:w-1/2 md:p-8">
                 <div>
-                    <h2 class="mb-4 text-2xl font-bold text-[#1A2B56]">Bundle: Winner Class dan Module (Debate)</h2>
+                    <h2 id="modalProdTitle" class="mb-4 text-2xl font-bold text-[#1A2B56]">Judul</h2>
 
                     <div class="mb-5">
                         <div class="mb-2 flex items-center gap-2">
                             <div class="h-5 w-1 rounded-full bg-yellow-400"></div>
                             <h3 class="font-semibold text-slate-800">Deskripsi Bundling</h3>
                         </div>
-                        <p class="text-sm leading-relaxed text-slate-600">
-                            Gabungan materi Winner Class (Video on Demand) + modul eksklusif Tips & Trik Juara Lomba UI/UX
-                            yang dirancang langsung untuk kamu yang ingin menang, bukan sekadar ikut lomba.
+                        <p id="modalProdDesc" class="text-sm leading-relaxed text-slate-600">
+                            Deskripsi
                         </p>
                     </div>
 
@@ -164,13 +164,7 @@
                                 class="flex items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
                                 <span
                                     class="flex h-5 w-5 items-center justify-center rounded-full bg-yellow-300 text-xs font-bold text-yellow-900">1</span>
-                                Business Case Class
-                            </span>
-                            <span
-                                class="flex items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
-                                <span
-                                    class="flex h-5 w-5 items-center justify-center rounded-full bg-yellow-300 text-xs font-bold text-yellow-900">2</span>
-                                UI/UX Design Class
+                                Akses Materi Inti
                             </span>
                         </div>
                     </div>
@@ -178,15 +172,15 @@
 
                 <div class="mt-4 border-t border-purple-100 pt-5">
                     <div class="mb-4">
-                        <p class="text-sm text-slate-400 line-through">149.000</p>
-                        <p class="text-3xl font-extrabold text-[#A855F7]">99.000</p>
+                        <p id="modalOldPrice" class="text-sm text-slate-400 line-through">0</p>
+                        <p id="modalNewPrice" class="text-3xl font-extrabold text-[#A855F7]">0</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button
+                        <button onclick="addToCart()"
                             class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-[#A855F7] text-[#A855F7] transition hover:bg-purple-50">
                             <i class="fa-solid fa-cart-shopping text-xl"></i>
                         </button>
-                        <button
+                        <button onclick="addToCart()"
                             class="flex h-12 w-full items-center justify-center rounded-xl bg-[#A855F7] text-lg font-bold italic text-white shadow-lg shadow-purple-200 transition hover:bg-purple-600">
                             Beli Bundling Ini
                         </button>
@@ -199,29 +193,63 @@
 
 @push('scripts')
     <script>
-        /**
-         * LOGIKA MODAL DETAIL PRODUK
-         * Menggunakan manipulasi class Tailwind 'hidden' dan 'flex'
-         */
         const modal = document.getElementById('productModal');
 
-        function openModal() {
+        // Variabel global sementara untuk menyimpan data produk yang SEDANG DIBUKA di modal
+        let currentProduct = {};
+
+        // 1. UPDATE FUNGSI BUKA MODAL AGAR DINAMIS
+        function openModal(id, title, desc, oldPrice, newPrice, imageSrc) {
+            // Ubah teks & gambar di dalam modal
+            document.getElementById('modalProdTitle').innerText = title;
+            document.getElementById('modalProdDesc').innerText = desc;
+            document.getElementById('modalOldPrice').innerText = oldPrice;
+            document.getElementById('modalNewPrice').innerText = newPrice;
+            document.getElementById('modalProdImage').src = imageSrc;
+
+            // Bersihkan format harga dari string "99.000" menjadi angka 99000 untuk kalkulasi keranjang
+            let numericPrice = parseInt(newPrice.replace(/\./g, ''));
+
+            // Simpan data ke variabel global agar bisa diambil oleh tombol Add to Cart
+            currentProduct = {
+                id: id,
+                title: title,
+                price: numericPrice,
+                image: imageSrc
+            };
+
+            // Munculkan Modal
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            // Disable scroll pada body agar tidak 'leaking' saat modal terbuka
             document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            // Kembalikan fungsi scroll
             document.body.style.overflow = 'auto';
         }
 
-        // Event Listener: Menutup modal jika area di luar kotak putih (overlay) diklik
+        // 2. UPDATE FUNGSI ADD TO CART
+        function addToCart() {
+            let cart = JSON.parse(localStorage.getItem('markup_cart')) || [];
+
+            // Cek berdasarkan ID dinamis yang disimpan di currentProduct
+            const isExist = cart.find(item => item.id === currentProduct.id);
+
+            if (!isExist) {
+                // Masukkan data produk yang sedang dibuka ke keranjang
+                cart.push(currentProduct);
+                localStorage.setItem('markup_cart', JSON.stringify(cart));
+                alert("Berhasil ditambahkan ke keranjang!");
+                closeModal(); // Opsional: Langsung tutup modal setelah sukses
+            } else {
+                alert("Produk ini sudah ada di keranjang kamu.");
+            }
+        }
+
         modal.addEventListener('click', function(e) {
-            if (event.target === modal) {
+            if (e.target === modal) {
                 closeModal();
             }
         });
