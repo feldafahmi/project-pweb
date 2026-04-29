@@ -49,7 +49,7 @@
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
             {{-- Card Lomba 1 --}}
-            <div onclick="openLombaModal('National Business Case Competition', 'Oleh FEB Universitas Indonesia', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com', '{{ asset('img/dreamcareer.jpeg') }}')"
+            <div onclick="openLombaModal('National Business Case Competition', 'Oleh BINUS University', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://binus.ac.id/', '{{ asset('img/dreamcareer.jpeg') }}')"
                 class="group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
 
                 <div class="relative h-48 w-full overflow-hidden bg-slate-200">
@@ -66,8 +66,8 @@
                     <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#A855F7]">Business Case</p>
                     <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] group-hover:text-[#A855F7] transition">
                         National Business Case Competition</h3>
-                    <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i> FEB Universitas
-                        Indonesia</p>
+                    <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i>
+                        BINUS University</p>
                     <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center text-xs">
                         <span class="font-bold text-slate-700">GRATIS</span>
                         <span class="text-purple-600 font-bold">Lihat Detail <i
@@ -75,6 +75,7 @@
                     </div>
                 </div>
             </div>
+            {{-- Akhir Card --}}
 
             {{-- Copy Card di atas untuk lomba lainnya... --}}
 
@@ -95,9 +96,9 @@
                 <div class="flex flex-grow flex-col p-6">
                     <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#A855F7]">Business Case</p>
                     <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] group-hover:text-[#A855F7] transition">
-                        National Business Case Competition</h3>
-                    <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i> FEB Universitas
-                        Indonesia</p>
+                        HSBC MACAU Business Case Competition</h3>
+                    <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i>
+                        University of Macau </p>
                     <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center text-xs">
                         <span class="font-bold text-slate-700">GRATIS</span>
                         <span class="text-purple-600 font-bold">Lihat Detail <i
@@ -105,6 +106,36 @@
                     </div>
                 </div>
             </div>
+            {{-- Akhir Card --}}
+
+            {{-- Card Lomba 3 --}}
+            <div onclick="openLombaModal('AECIFEST 2026 Bussiness Plan & Essay', 'Oleh UPN Veteran Jaawa Timur', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com', '{{ asset('img/ignite.jpeg') }}')"
+                class="group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+
+                <div class="relative h-48 w-full overflow-hidden bg-slate-200">
+                    <img src="{{ asset('img/ignite.jpeg') }}"
+                        class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
+                    {{-- Badge Deadline --}}
+                    <div
+                        class="absolute top-4 left-4 rounded-lg bg-red-500 px-3 py-1 text-[10px] font-bold text-white shadow-lg">
+                        <i class="fa-solid fa-clock mr-1"></i> DEADLINE: 25 MEI
+                    </div>
+                </div>
+
+                <div class="flex flex-grow flex-col p-6">
+                    <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#A855F7]">Business Case</p>
+                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] group-hover:text-[#A855F7] transition">
+                        AECIFEST 2026 Bussiness Plan & Essay</h3>
+                    <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i>
+                        UPN Veteran Jaawa Timur</p>
+                    <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center text-xs">
+                        <span class="font-bold text-slate-700">GRATIS</span>
+                        <span class="text-purple-600 font-bold">Lihat Detail <i
+                                class="fa-solid fa-arrow-right ml-1 text-[10px]"></i></span>
+                    </div>
+                </div>
+            </div>
+            {{-- Akhir Card --}}
 
         </div>
     </div>
