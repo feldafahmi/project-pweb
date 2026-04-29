@@ -7,6 +7,10 @@ Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
 Route::view('/produk', 'produk')->name('produk');
 
+Route::get('/info-lomba', function () {
+    return view('info-lomba');
+})->name('lomba');
+
 Route::view('/login', 'login')->name('login');
 Route::view('/register', 'register')->name('register');
 

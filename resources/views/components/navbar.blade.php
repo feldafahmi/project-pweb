@@ -1,7 +1,7 @@
 @php
     $navLinks = [
         ['label' => 'Beranda', 'href' => url('/'), 'active' => request()->is('/')],
-        ['label' => 'Info Lomba', 'href' => '#', 'active' => false],
+        ['label' => 'Info Lomba', 'href' => route('lomba'), 'active' => false],
         ['label' => 'Produk', 'href' => route('produk'), 'active' => request()->routeIs('produk')],
     ];
 @endphp
