@@ -122,6 +122,12 @@
             loadCart(); // Render ulang
         }
 
+        // TAMBAHKAN LOGIKA REDIRECT KE CHECKOUT
+        document.getElementById('btn-checkout').addEventListener('click', function() {
+            // Arahkan ke url checkout di dashboard
+            window.location.href = '/dashboard/checkout';
+        });
+
         // Jalankan saat halaman dimuat
         document.addEventListener('DOMContentLoaded', loadCart);
     </script>

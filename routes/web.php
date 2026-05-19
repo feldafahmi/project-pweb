@@ -19,6 +19,10 @@ Route::get('/dashboard/keranjang', function () {
     return view('dashboard.keranjang');
 })->name('dashboard.cart');
 
+Route::get('/dashboard/checkout', function () {
+    return view('dashboard.checkout'); 
+})->name('dashboard.checkout');
+
 Route::view('/login', 'login')->name('login');
 Route::view('/register', 'register')->name('register');
 
