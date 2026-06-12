@@ -3,20 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Transaction extends Model
 {
-    protected $table = 'TRANSACTIONS';
-    protected $primaryKey = 'ID_TRANSACTIONS';
-    public $timestamps = false;
-
     protected $fillable = [
-        'ID_USERS', 
-        'ID_PACKAGE', 
-        'TOTAL_AMOUNT', 
-        'PAYMENT_STATUS', 
-        'PAYMENT_METHOD', 
-        'TANGGAL_PEMBELIAN', 
-        'BUKTI_TRANSFER'
+        'user_id',
+        'code',
+        'total_amount',
+        'payment_method',
+        'status',
+        'paid_at',
+        'payment_proof',
     ];
+
+    protected $casts = [
+        'total_amount' => 'integer',
+        'paid_at'      => 'datetime',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
 }
