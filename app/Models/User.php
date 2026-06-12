@@ -23,4 +23,15 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+
+    // Jangan pernah kirim hash password / remember_token di response JSON
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 }

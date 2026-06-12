@@ -5,63 +5,71 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // REGISTER
-    public function register(Request $request) {
-    $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|unique:USERS,email', 
-        'password' => 'required|min:6'
-    ]);
+    // REGISTER — buat akun lalu langsung terbitkan token (auto-login)
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
 
-    $user = \App\Models\User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => \Hash::make($request->password), 
-    ]);
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
 
-    return response()->json(['message' => 'Registrasi Berhasil', 'user' => $user], 201);
-    }
-
-    // LOGIN
-    public function login(Request $request) {
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password
-        ];
-
-        if (Auth::attempt($credentials)) {
-        $user = Auth::user();
-        
-        // Hapus token lama (opsional, agar satu user cuma punya 1 token aktif)
-        $user->tokens()->delete();
-
-        // Buat token baru
         $token = $user->createToken('mobile_token')->plainTextToken;
 
-        // Kirim token ke Flutter
+        return response()->json([
+            'message' => 'Registrasi Berhasil',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
+        ], 201);
+    }
+
+    // LOGIN — verifikasi kredensial tanpa membuat session web (stateless token)
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Email atau Password salah'],
+            ]);
+        }
+
+        // Hapus token lama agar satu user hanya punya satu token aktif
+        $user->tokens()->delete();
+
+        $token = $user->createToken('mobile_token')->plainTextToken;
+
         return response()->json([
             'message' => 'Login Berhasil',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
-        return response()->json(['message' => 'Email atau Password salah'], 401);
-    }
-
-    // LOGOUT
+    // LOGOUT — hapus token yang sedang dipakai untuk request ini
     public function logout(Request $request)
-{
-    // Menghapus token yang sedang digunakan untuk request ini
-    $request->user()->currentAccessToken()->delete();
+    {
+        $request->user()->currentAccessToken()->delete();
 
-    return response()->json([
-        'message' => 'Logout berhasil, token telah dihapus'
-    ], 200);
-}
+        return response()->json([
+            'message' => 'Logout berhasil, token telah dihapus',
+        ], 200);
+    }
 }
