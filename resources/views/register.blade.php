@@ -78,21 +78,7 @@
                         <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
                     </div>
 
-                    {{-- Input Role --}}
-                    <div>
-                        <label for="role" class="mb-1.5 block text-xs font-medium text-gray-400">Role</label>
-                        <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
-                            data-field-wrapper>
-                            <i class="fas fa-users text-gray-400"></i>
-                            <select id="role" name="role" required data-validate="role"
-                                class="w-full bg-transparent text-sm outline-none text-gray-700">
-                                <option value="" disabled selected>Pilih role</option>
-                                <option value="student">Student</option>
-                                <option value="mentor">Mentor</option>
-                            </select>
-                        </div>
-                        <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
-                    </div>
+
 
                     {{-- Input Password --}}
                     <div>

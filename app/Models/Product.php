@@ -33,6 +33,20 @@ class Product extends Model
         'includes'      => 'array',
     ];
 
+    protected $appends = [
+        'image',
+    ];
+
+    public function getImageAttribute()
+    {
+        return $this->image_url;
+    }
+
+    public function setImageAttribute($value)
+    {
+        $this->attributes['image_url'] = $value;
+    }
+
     public function author()
     {
         return $this->belongsTo(Mentor::class, 'author_id');

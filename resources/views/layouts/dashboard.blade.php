@@ -155,9 +155,19 @@
             }
 
             document.querySelector('[data-dashboard-logout]')?.addEventListener('click', () => {
-                localStorage.removeItem('markup.auth.user');
-                sessionStorage.setItem('markup.flash', 'Berhasil keluar dari akun.');
-                window.location.href = '/';
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                }).finally(() => {
+                    localStorage.removeItem('markup.auth.user');
+                    sessionStorage.setItem('markup.flash', 'Berhasil keluar dari akun.');
+                    window.location.href = '/';
+                });
             });
         })();
     </script>

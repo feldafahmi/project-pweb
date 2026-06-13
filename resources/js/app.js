@@ -177,43 +177,47 @@ function handleAuthSubmit(form, mode) {
     setSubmitting(form, true);
     showAlert(form, null);
 
-    setTimeout(() => {
-        try {
-            const data = Object.fromEntries(new FormData(form).entries());
-            const isAdmin = mode === "login" && isAdminEmail(data.email);
+    const data = new FormData(form);
+    const url = mode === "login" ? "/login" : "/register";
 
-            const user = {
-                name: isAdmin
-                    ? "Admin MARK-UP"
-                    : (data.name || data.email.split("@")[0]),
-                email: data.email,
-                role: isAdmin ? "admin" : (data.role || "student"),
-                token: "dummy-" + Math.random().toString(36).slice(2, 10),
-                issuedAt: Date.now(),
-            };
-            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-
-            let flash;
-            let redirect;
-            if (isAdmin) {
-                flash = `Selamat datang, ${user.name}! Anda masuk sebagai Admin.`;
-                redirect = "/admin/products";
-            } else if (mode === "login") {
-                flash = `Selamat datang kembali, ${user.name}!`;
-                redirect = "/";
-            } else {
-                flash = `Akun berhasil dibuat. Selamat datang, ${user.name}!`;
-                redirect = "/";
-            }
-            sessionStorage.setItem("markup.flash", flash);
-
-            window.location.href = redirect;
-        } catch (err) {
-            console.error("[auth] login failed", err);
-            setSubmitting(form, false);
-            showAlert(form, "error", "Gagal menyimpan sesi.");
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json"
+        },
+        body: data
+    })
+    .then(async response => {
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.message || "Terjadi kesalahan.");
         }
-    }, 800);
+        return result;
+    })
+    .then(user => {
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+        
+        let flash;
+        let redirect;
+        if (user.role === "admin") {
+            flash = `Selamat datang, ${user.name}! Anda masuk sebagai Admin.`;
+            redirect = "/admin/products";
+        } else if (user.role === "mentor") {
+            flash = `Selamat datang, ${user.name}! Anda masuk sebagai Mentor.`;
+            redirect = "/mentor/products";
+        } else {
+            flash = `Selamat datang kembali, ${user.name}!`;
+            redirect = "/";
+        }
+        sessionStorage.setItem("markup.flash", flash);
+        window.location.href = redirect;
+    })
+    .catch(err => {
+        console.error("[auth] failed", err);
+        setSubmitting(form, false);
+        showAlert(form, "error", err.message);
+    });
 }
 
 function setSubmitting(form, isSubmitting) {
@@ -289,9 +293,19 @@ function initNavbarAuthState() {
         `;
 
         authSlot.querySelector("[data-logout]").addEventListener("click", () => {
-            localStorage.removeItem(AUTH_STORAGE_KEY);
-            sessionStorage.setItem("markup.flash", "Berhasil keluar.");
-            window.location.href = "/";
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            }).finally(() => {
+                localStorage.removeItem(AUTH_STORAGE_KEY);
+                sessionStorage.setItem("markup.flash", "Berhasil keluar.");
+                window.location.href = "/";
+            });
         });
     } catch (e) {
         localStorage.removeItem(AUTH_STORAGE_KEY);

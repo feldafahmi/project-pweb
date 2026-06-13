@@ -56,12 +56,79 @@ class AuthController extends Controller
 
     // LOGOUT
     public function logout(Request $request)
-{
-    // Menghapus token yang sedang digunakan untuk request ini
-    $request->user()->currentAccessToken()->delete();
+    {
+        // Menghapus token yang sedang digunakan untuk request ini
+        $request->user()->currentAccessToken()->delete();
 
-    return response()->json([
-        'message' => 'Logout berhasil, token telah dihapus'
-    ], 200);
-}
+        return response()->json([
+            'message' => 'Logout berhasil, token telah dihapus'
+        ], 200);
+    }
+
+    // WEB LOGIN
+    public function webLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+
+            return response()->json([
+                'message' => 'Login Berhasil',
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Email atau Password salah.'
+        ], 422);
+    }
+
+    // WEB REGISTER
+    public function webRegister(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|min:3',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'user', // Locked to 'user'
+        ]);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return response()->json([
+            'message' => 'Registrasi Berhasil',
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ], 201);
+    }
+
+    // WEB LOGOUT
+    public function webLogout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Logout Berhasil'], 200);
+        }
+
+        return redirect('/')->with('success', 'Berhasil Keluar.');
+    }
 }

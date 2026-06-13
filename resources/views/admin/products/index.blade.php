@@ -3,26 +3,32 @@
 @section('title', 'Manajemen Produk')
 
 @php
-    $products = [
-        ['id' => 1, 'image' => 'img/63815.png', 'name' => 'Bundle: Winner Class Business Case', 'type' => 'Bundling', 'original_price' => 299000, 'discount_price' => 199000],
-        ['id' => 2, 'image' => 'img/63815.png', 'name' => 'Live Bootcamp: Strategic Consulting', 'type' => 'Bootcamp', 'original_price' => 499000, 'discount_price' => 399000],
-        ['id' => 3, 'image' => 'img/63815.png', 'name' => 'Module: Fundamental Business Case', 'type' => 'Module', 'original_price' => 99000, 'discount_price' => 79000],
-        ['id' => 4, 'image' => 'img/63815.png', 'name' => 'Kelas: Public Speaking untuk Juara', 'type' => 'Kelas', 'original_price' => 149000, 'discount_price' => 119000],
-    ];
-
     $typeTones = [
-        'Kelas' => 'blue',
-        'Bootcamp' => 'orange',
-        'Module' => 'purple',
-        'Bundling' => 'green',
+        'kelas' => 'blue',
+        'bootcamp' => 'orange',
+        'modul' => 'purple',
     ];
 
-    $productTypes = ['Kelas', 'Bootcamp', 'Module', 'Bundling'];
+    $productTypes = ['kelas', 'bootcamp', 'modul'];
 
-    $idr = fn ($v) => 'Rp ' . number_format($v, 0, ',', '.');
+    $idr = fn ($v) => $v ? 'Rp ' . number_format($v, 0, ',', '.') : '-';
 @endphp
 
 @section('content')
+<div x-data="{
+    selectedProduct: { id: '', title: '', type: '', description: '', original_price: '', price: '' },
+    isEdit: false,
+    openCreateModal() {
+        this.isEdit = false;
+        this.selectedProduct = { id: '', title: '', type: '', description: '', original_price: '', price: '' };
+        $dispatch('open-modal', { name: 'product-form' });
+    },
+    openEditModal(prod) {
+        this.isEdit = true;
+        this.selectedProduct = { ...prod };
+        $dispatch('open-modal', { name: 'product-form' });
+    }
+}">
     {{-- Page header --}}
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -30,34 +36,51 @@
             <p class="mt-1 text-sm text-slate-500">Kelola katalog produk pembelajaran MARK-UP.</p>
         </div>
         <x-admin.button variant="primary" icon="fa-plus"
-            x-on:click="$dispatch('open-modal', { name: 'product-form' })">
+            x-on:click="openCreateModal()">
             Tambah Produk
         </x-admin.button>
     </div>
+
+    @if(session('success'))
+        <div class="mb-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+            {{ session('success') }}
+        </div>
+    @endif
 
     {{-- Table --}}
     <x-admin.table :columns="['Gambar', 'Nama Produk', 'Tipe', 'Harga Asli', 'Harga Diskon', 'Aksi']">
         @foreach ($products as $product)
             <tr class="hover:bg-slate-50/60">
                 <td class="px-6 py-4">
-                    <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] }}"
+                    <img src="{{ asset($product->image_url ?? 'img/63815.png') }}" alt="{{ $product->title }}"
                         class="h-12 w-12 rounded-lg object-cover ring-1 ring-slate-200">
                 </td>
                 <td class="px-6 py-4">
-                    <p class="font-semibold text-slate-800">{{ $product['name'] }}</p>
+                    <p class="font-semibold text-slate-800">{{ $product->title }}</p>
                 </td>
                 <td class="px-6 py-4">
-                    <x-admin.badge :tone="$typeTones[$product['type']] ?? 'slate'">
-                        {{ $product['type'] }}
+                    <x-admin.badge :tone="$typeTones[$product->type] ?? 'slate'">
+                        {{ ucfirst($product->type) }}
                     </x-admin.badge>
                 </td>
-                <td class="px-6 py-4 text-slate-400 line-through">{{ $idr($product['original_price']) }}</td>
-                <td class="px-6 py-4 font-bold text-blue-600">{{ $idr($product['discount_price']) }}</td>
+                <td class="px-6 py-4 text-slate-400 line-through">{{ $idr($product->original_price) }}</td>
+                <td class="px-6 py-4 font-bold text-blue-600">{{ $idr($product->price) }}</td>
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-1.5">
                         <x-admin.button variant="ghost-blue" size="icon" icon="fa-pen"
-                            x-on:click="$dispatch('open-modal', { name: 'product-form' })" />
-                        <x-admin.button variant="ghost-danger" size="icon" icon="fa-trash" />
+                            x-on:click="openEditModal({
+                                id: {{ $product->id }},
+                                title: '{{ addslashes($product->title) }}',
+                                type: '{{ $product->type }}',
+                                description: '{{ addslashes($product->description) }}',
+                                original_price: {{ $product->original_price ?? 0 }},
+                                price: {{ $product->price ?? 0 }}
+                            })" />
+                        <form action="{{ (request()->is('admin/*') ? '/admin' : '/mentor') }}/products/{{ $product->id }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <x-admin.button variant="ghost-danger" size="icon" icon="fa-trash" type="submit" />
+                        </form>
                     </div>
                 </td>
             </tr>
@@ -65,21 +88,24 @@
     </x-admin.table>
 
     {{-- Modal: Tambah/Edit Produk --}}
-    <x-admin.modal name="product-form" title="Tambah / Edit Produk" size="lg">
-        <form class="space-y-5">
+    <x-admin.modal name="product-form" ::title="isEdit ? 'Edit Produk' : 'Tambah Produk'" size="lg">
+        <form id="prod-form" method="POST" :action="isEdit ? '{{ request()->is('admin/*') ? '/admin' : '/mentor' }}/products/' + selectedProduct.id : '{{ request()->is('admin/*') ? '/admin' : '/mentor' }}/products'" enctype="multipart/form-data" class="space-y-5">
             @csrf
+            <template x-if="isEdit">
+                <input type="hidden" name="_method" value="PUT">
+            </template>
 
-            <x-admin.field label="Nama Produk" name="name" :required="true">
-                <input type="text" id="name" name="name" placeholder="Contoh: Bundle Winner Class"
-                    class="admin-input">
+            <x-admin.field label="Nama Produk" name="title" :required="true">
+                <input type="text" id="title" name="title" x-model="selectedProduct.title" placeholder="Contoh: Bundle Winner Class"
+                    class="admin-input" required>
             </x-admin.field>
 
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <x-admin.field label="Tipe" name="type" :required="true">
-                    <select id="type" name="type" class="admin-input-select">
+                    <select id="type" name="type" x-model="selectedProduct.type" class="admin-input-select" required>
                         <option value="" disabled selected>Pilih tipe produk</option>
                         @foreach ($productTypes as $type)
-                            <option value="{{ $type }}">{{ $type }}</option>
+                            <option value="{{ $type }}">{{ ucfirst($type) }}</option>
                         @endforeach
                     </select>
                 </x-admin.field>
@@ -91,27 +117,28 @@
             </div>
 
             <x-admin.field label="Deskripsi" name="description">
-                <textarea id="description" name="description" rows="4"
+                <textarea id="description" name="description" x-model="selectedProduct.description" rows="4"
                     placeholder="Jelaskan manfaat & isi produk secara singkat..."
                     class="admin-input"></textarea>
             </x-admin.field>
 
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <x-admin.field label="Harga Asli" name="original_price" :required="true">
-                    <input type="number" id="original_price" name="original_price" min="0" placeholder="299000"
-                        class="admin-input">
+                    <input type="number" id="original_price" name="original_price" x-model="selectedProduct.original_price" min="0" placeholder="299000"
+                        class="admin-input" required>
                 </x-admin.field>
 
-                <x-admin.field label="Harga Diskon" name="discount_price">
-                    <input type="number" id="discount_price" name="discount_price" min="0" placeholder="199000"
-                        class="admin-input">
+                <x-admin.field label="Harga Diskon" name="price" :required="true">
+                    <input type="number" id="price" name="price" x-model="selectedProduct.price" min="0" placeholder="199000"
+                        class="admin-input" required>
                 </x-admin.field>
             </div>
         </form>
 
         <x-slot:footer>
             <x-admin.button variant="outline" x-on:click="open = false">Batal</x-admin.button>
-            <x-admin.button variant="primary" type="submit" icon="fa-floppy-disk">Simpan</x-admin.button>
+            <x-admin.button variant="primary" type="submit" form="prod-form" icon="fa-floppy-disk">Simpan</x-admin.button>
         </x-slot:footer>
     </x-admin.modal>
+</div>
 @endsection
