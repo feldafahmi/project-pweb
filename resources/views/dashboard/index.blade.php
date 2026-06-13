@@ -79,7 +79,9 @@
             </div>
         </div>
 
-        {{-- KOLOM KANAN (Lebar 1/3): WIDGET JAVASCRIPT (TUGAS 2 & TUGAS 4) --}}
+        {{-- ... (kode sebelumnya tetap sama hingga penutup Milestone Tracker) ... --}}
+
+        {{-- KOLOM KANAN (Lebar 1/3): HANYA MILISET ONE TRACKER SEKARANG --}}
         <div class="lg:col-span-1 space-y-6">
 
             {{-- WIDGET TUGAS 2: INTERACTIVE TO-DO LIST (Milestone Tracker) --}}
@@ -108,34 +110,13 @@
                 </div>
             </div>
 
-            {{-- WIDGET TUGAS 4: FETCH API DATA (Quote of the Day) --}}
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 class="font-bold text-navy-600 mb-1 flex items-center gap-2 text-sm">
-                    <i class="fa-solid fa-lightbulb text-yellow-500"></i> Mentoring Quote
-                </h3>
-                <p class="text-[11px] text-slate-400 mb-4">Inspirasi harian eksternal via REST API Fetching.</p>
-
-                <div id="quote-loading" class="text-xs text-slate-400 animate-pulse py-2">
-                    <i class="fa-solid fa-spinner animate-spin mr-1"></i> Menghubungi server API...
-                </div>
-
-                <div id="quote-content" class="hidden">
-                    <p id="quote-text" class="text-sm italic text-slate-600 font-medium leading-relaxed">"Quote"</p>
-                    <p id="quote-author" class="text-xs text-purple-600 font-bold mt-2 text-right">- Author</p>
-                </div>
-
-                <div id="quote-error" class="hidden text-xs text-red-500 py-2">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Gagal memuat inspirasi eksternal.
-                </div>
-            </div>
-
         </div>
     </div>
 @endsection
 
 @push('scripts')
     <script>
-        // LOGIKA INTERACTIVE TO-DO LIST
+        // LOGIKA INTERACTIVE TO-DO LIST (TETAP ADA)
         const todoForm = document.getElementById('todo-form');
         const todoInput = document.getElementById('todo-input');
         const todoList = document.getElementById('todo-list');
@@ -239,41 +220,9 @@
             renderTodos();
         }
 
-        // LOGIKA FETCH DATA PUBLIC API (TUGAS 4)
-        async function fetchDailyQuote() {
-            const loadingEl = document.getElementById('quote-loading');
-            const contentEl = document.getElementById('quote-content');
-            const errorEl = document.getElementById('quote-error');
-            const textEl = document.getElementById('quote-text');
-            const authorEl = document.getElementById('quote-author');
-
-            try {
-                const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(
-                    'https://zenquotes.io/api/random'));
-
-                if (!response.ok) throw new Error('Network error');
-
-                const data = await response.json();
-                const actualQuoteData = JSON.parse(data.contents);
-                const quote = actualQuoteData[0];
-
-                if (textEl && authorEl) {
-                    textEl.innerText = `"${quote.q}"`;
-                    authorEl.innerText = `- ${quote.a}`;
-                }
-
-                if (loadingEl) loadingEl.classList.add('hidden');
-                if (contentEl) contentEl.classList.remove('hidden');
-            } catch (error) {
-                console.error("Gagal Fetching API:", error);
-                if (loadingEl) loadingEl.classList.add('hidden');
-                if (errorEl) errorEl.classList.remove('hidden');
-            }
-        }
-
+        // FUNGSI FETCH API SUDAH DIHAPUS DARI SINI
         document.addEventListener('DOMContentLoaded', function() {
             renderTodos();
-            fetchDailyQuote();
         });
     </script>
 @endpush
