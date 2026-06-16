@@ -19,14 +19,20 @@ class User extends Authenticatable
     public $timestamps = true;    
 
     protected $fillable = [
-        'name',
         'username',
         'email',
         'first_name',
         'last_name',
         'institution',
-        'department',
         'password',
         'role',
     ];
+
+    /**
+     * Get user's full name.
+     */
+    public function getNameAttribute()
+    {
+        return trim($this->first_name . ' ' . $this->last_name);
+    }
 }

@@ -119,6 +119,13 @@ function validateField(input, form, eventType = null) {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = "Format email tidak valid";
     } else if (type === "password") {
         if (value.length < 8) error = "Password minimal 8 karakter";
+    } else if (type === "username") {
+        if (value.length < 3) error = "Username minimal 3 karakter";
+        if (!/^[a-zA-Z0-9_]+$/.test(value)) error = "Username hanya boleh huruf, angka, dan underscore";
+    } else if (type === "first_name") {
+        if (value.length < 2) error = "Nama depan minimal 2 karakter";
+    } else if (type === "last_name") {
+        if (value.length < 2) error = "Nama belakang minimal 2 karakter";
     } else if (type === "name") {
         if (value.length < 3) error = "Nama minimal 3 karakter";
     } else if (type === "role") {

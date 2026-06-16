@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Membuat Akun Admin (Root Kasta Tertinggi)
         User::create([
-            'name' => 'Admin MARK-UP',
             'username' => 'adminmarkup',
             'first_name' => 'Admin',
             'last_name' => 'MARK-UP',
@@ -23,12 +22,10 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('passwordadmin'), // Otomatis enkripsi password bcrypt
             'role' => 'admin',
             'institution' => 'Universitas Airlangga',
-            'department' => 'Sistem Informasi',
         ]);
 
         // 2. Membuat Akun Mentor (Kasta Menengah)
         User::create([
-            'name' => 'Mentor MARK-UP',
             'username' => 'mentormarkup',
             'first_name' => 'Mentor',
             'last_name' => 'Markup',
@@ -36,7 +33,6 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('passwordmentor'),
             'role' => 'mentor',
             'institution' => 'Universitas Airlangga',
-            'department' => 'Sistem Informasi',
         ]);
 
         // 3. Membuat Akun User/Student biasa (Kasta Dasar)

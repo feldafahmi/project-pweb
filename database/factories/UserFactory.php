@@ -26,7 +26,6 @@ class UserFactory extends Factory
         $firstName = fake()->firstName();
         $lastName = fake()->lastName();
         return [
-            'name' => $firstName . ' ' . $lastName,
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'first_name' => $firstName,

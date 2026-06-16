@@ -9,33 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // REGISTER
     public function register(Request $request) {
         $request->validate([
-            'name' => 'required',
+            'username' => 'required|string|min:3|max:50|unique:users,username',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email', 
+            'institution' => 'nullable|string|max:255',
             'password' => 'required|min:6'
         ]);
 
-        $emailParts = explode('@', $request->email);
-        $baseUsername = strtolower($emailParts[0]);
-        $username = $baseUsername;
-        $counter = 1;
-        while (\App\Models\User::where('username', $username)->exists()) {
-            $username = $baseUsername . $counter++;
-        }
-
-        $nameParts = explode(' ', trim($request->name), 2);
-        $firstName = $nameParts[0];
-        $lastName = $nameParts[1] ?? $nameParts[0];
-
         $user = \App\Models\User::create([
-            'name' => $request->name,
-            'username' => $username,
+            'username' => $request->username,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
-            'first_name' => $firstName,
-            'last_name' => $lastName,
+            'institution' => $request->institution,
             'password' => \Hash::make($request->password), 
+            'role' => 'user',
         ]);
 
         return response()->json(['message' => 'Registrasi Berhasil', 'user' => $user], 201);
@@ -94,7 +85,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'Login Berhasil',
-                'name' => $user->name,
+                'name' => $user->first_name . ' ' . $user->last_name,
                 'email' => $user->email,
                 'role' => $user->role,
             ], 200);
@@ -109,29 +100,20 @@ class AuthController extends Controller
     public function webRegister(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|min:3',
+            'username' => 'required|string|min:3|max:50|unique:users,username',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'institution' => 'nullable|string|max:255',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $emailParts = explode('@', $request->email);
-        $baseUsername = strtolower($emailParts[0]);
-        $username = $baseUsername;
-        $counter = 1;
-        while (User::where('username', $username)->exists()) {
-            $username = $baseUsername . $counter++;
-        }
-
-        $nameParts = explode(' ', trim($request->name), 2);
-        $firstName = $nameParts[0];
-        $lastName = $nameParts[1] ?? $nameParts[0];
-
         $user = User::create([
-            'name' => $request->name,
-            'username' => $username,
+            'username' => $request->username,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
-            'first_name' => $firstName,
-            'last_name' => $lastName,
+            'institution' => $request->institution,
             'password' => Hash::make($request->password),
             'role' => 'user', // Locked to 'user'
         ]);
@@ -141,7 +123,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Registrasi Berhasil',
-            'name' => $user->name,
+            'name' => $user->first_name . ' ' . $user->last_name,
             'email' => $user->email,
             'role' => $user->role,
         ], 201);

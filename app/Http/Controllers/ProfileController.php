@@ -42,11 +42,7 @@ class ProfileController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'institution' => 'nullable|string|max:255',
-            'department' => 'nullable|string|max:255',
         ]);
-
-        // Automatically update the concatenated name field
-        $data['name'] = trim($data['first_name'] . ' ' . $data['last_name']);
 
         $user->update($data);
 
