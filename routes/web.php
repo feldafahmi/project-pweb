@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 
 // Public Views
 Route::view('/', 'home')->name('home');
@@ -45,8 +46,10 @@ Route::middleware('auth')->group(function () {
         })->name('checkout');
 
         Route::prefix('profile')->name('profile.')->group(function () {
-            Route::view('/', 'dashboard.profile.index')->name('index');
-            Route::view('/password', 'dashboard.profile.password')->name('password');
+            Route::get('/', [ProfileController::class, 'index'])->name('index');
+            Route::put('/', [ProfileController::class, 'update'])->name('update');
+            Route::get('/password', [ProfileController::class, 'passwordIndex'])->name('password');
+            Route::post('/password', [ProfileController::class, 'passwordUpdate'])->name('password.update');
         });
     });
 

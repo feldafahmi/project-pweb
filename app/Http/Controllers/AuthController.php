@@ -11,19 +11,34 @@ class AuthController extends Controller
 {
     // REGISTER
     public function register(Request $request) {
-    $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|unique:USERS,email', 
-        'password' => 'required|min:6'
-    ]);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email', 
+            'password' => 'required|min:6'
+        ]);
 
-    $user = \App\Models\User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => \Hash::make($request->password), 
-    ]);
+        $emailParts = explode('@', $request->email);
+        $baseUsername = strtolower($emailParts[0]);
+        $username = $baseUsername;
+        $counter = 1;
+        while (\App\Models\User::where('username', $username)->exists()) {
+            $username = $baseUsername . $counter++;
+        }
 
-    return response()->json(['message' => 'Registrasi Berhasil', 'user' => $user], 201);
+        $nameParts = explode(' ', trim($request->name), 2);
+        $firstName = $nameParts[0];
+        $lastName = $nameParts[1] ?? $nameParts[0];
+
+        $user = \App\Models\User::create([
+            'name' => $request->name,
+            'username' => $username,
+            'email' => $request->email,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'password' => \Hash::make($request->password), 
+        ]);
+
+        return response()->json(['message' => 'Registrasi Berhasil', 'user' => $user], 201);
     }
 
     // LOGIN
@@ -99,9 +114,24 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        $emailParts = explode('@', $request->email);
+        $baseUsername = strtolower($emailParts[0]);
+        $username = $baseUsername;
+        $counter = 1;
+        while (User::where('username', $username)->exists()) {
+            $username = $baseUsername . $counter++;
+        }
+
+        $nameParts = explode(' ', trim($request->name), 2);
+        $firstName = $nameParts[0];
+        $lastName = $nameParts[1] ?? $nameParts[0];
+
         $user = User::create([
             'name' => $request->name,
+            'username' => $username,
             'email' => $request->email,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'password' => Hash::make($request->password),
             'role' => 'user', // Locked to 'user'
         ]);
