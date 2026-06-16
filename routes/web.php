@@ -16,9 +16,7 @@ Route::get('/tentang-kami/profil-mentor', function () {
     return view('profil-mentor');
 })->name('about.mentor');
 
-Route::get('/info-lomba', function () {
-    return view('info-lomba');
-})->name('lomba');
+Route::get('/info-lomba', [CompetitionController::class, 'publicIndex'])->name('lomba');
 
 // Public Guest Auth Views & Submissions
 Route::middleware('guest')->group(function () {

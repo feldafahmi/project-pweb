@@ -53,6 +53,15 @@ class CompetitionController extends Controller
     }
 
     /**
+     * Web Public Index
+     */
+    public function publicIndex()
+    {
+        $competitions = Competition::latest()->get();
+        return view('info-lomba', compact('competitions'));
+    }
+
+    /**
      * Web Admin Index
      */
     public function adminIndex(Request $request)

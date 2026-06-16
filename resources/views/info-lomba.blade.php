@@ -1,5 +1,17 @@
 @extends('layouts.app')
 
+@php
+    $idr = fn ($v) => $v > 0 ? 'Rp ' . number_format($v, 0, ',', '.') : 'GRATIS';
+    $date = fn ($v) => $v ? \Carbon\Carbon::parse($v)->isoFormat('D MMM') : '-';
+    $fullDate = fn ($v) => $v ? \Carbon\Carbon::parse($v)->isoFormat('D MMMM Y') : '-';
+
+    if (!function_exists('uppercase')) {
+        function uppercase($str) {
+            return strtoupper($str);
+        }
+    }
+@endphp
+
 @section('content')
     {{-- 1. BREADCRUMBS --}}
     <div class="mx-auto max-w-6xl px-4 mt-6">
@@ -31,112 +43,70 @@
         {{-- 3. FILTER KATEGORI LOMBA --}}
         <div class="mb-12 flex flex-wrap justify-center gap-3">
             <button
-                class="rounded-full bg-[#A855F7] px-6 py-2 text-sm font-bold text-white shadow-lg shadow-purple-200">Semua</button>
+                onclick="filterCategory('Semua', this)"
+                class="filter-btn rounded-full bg-[#A855F7] px-6 py-2 text-sm font-bold text-white shadow-lg shadow-purple-200 transition-all duration-300">Semua</button>
             <button
-                class="rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50">Business
-                Plan</button>
+                onclick="filterCategory('Business Case', this)"
+                class="filter-btn rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50 transition-all duration-300">Business Case</button>
             <button
-                class="rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50">Case
-                Study</button>
+                onclick="filterCategory('Business Plan', this)"
+                class="filter-btn rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50 transition-all duration-300">Business Plan</button>
             <button
-                class="rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50">UI/UX
-                Design</button>
+                onclick="filterCategory('Business Model Canvas', this)"
+                class="filter-btn rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50 transition-all duration-300">Business Canvas</button>
             <button
-                class="rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50">Essay</button>
+                onclick="filterCategory('UI/UX', this)"
+                class="filter-btn rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50 transition-all duration-300">UI/UX</button>
+            <button
+                onclick="filterCategory('LKTI', this)"
+                class="filter-btn rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50 transition-all duration-300">LKTI</button>
         </div>
 
         {{-- 4. GRID KARTU LOMBA --}}
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
-            {{-- Card Lomba 1 --}}
-            <div onclick="openLombaModal('National Business Case Competition', 'Oleh BINUS University', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://binus.ac.id/', '{{ asset('img/dreamcareer.jpeg') }}')"
-                class="group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+            @forelse ($competitions as $competition)
+            <div onclick="openLombaModal('{{ addslashes($competition->title) }}', '{{ addslashes($competition->organizer) }}', '{{ $fullDate($competition->end_date) }}', 'Kategori: {{ $competition->category }} | Target: {{ $competition->target_audience }}', '{{ $competition->link_pendaftaran }}', '{{ asset($competition->image_url ?? 'img/iyref.jpeg') }}')"
+                data-category="{{ $competition->category }}"
+                class="competition-card group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
 
                 <div class="relative h-48 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/dreamcareer.jpeg') }}"
+                    <img src="{{ asset($competition->image_url ?? 'img/iyref.jpeg') }}"
                         class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
                     {{-- Badge Deadline --}}
                     <div
                         class="absolute top-4 left-4 rounded-lg bg-red-500 px-3 py-1 text-[10px] font-bold text-white shadow-lg">
-                        <i class="fa-solid fa-clock mr-1"></i> DEADLINE: 25 MEI
+                        <i class="fa-solid fa-clock mr-1"></i> DEADLINE: {{ uppercase($date($competition->end_date)) }}
                     </div>
                 </div>
 
                 <div class="flex flex-grow flex-col p-6">
-                    <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#A855F7]">Business Case</p>
+                    <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#A855F7]">{{ $competition->category }}</p>
                     <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] group-hover:text-[#A855F7] transition">
-                        National Business Case Competition</h3>
+                        {{ $competition->title }}</h3>
                     <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i>
-                        BINUS University</p>
+                        {{ $competition->organizer }}</p>
                     <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center text-xs">
-                        <span class="font-bold text-slate-700">GRATIS</span>
+                        <span class="font-bold text-slate-700">{{ $idr($competition->registration_fee) }}</span>
                         <span class="text-purple-600 font-bold">Lihat Detail <i
                                 class="fa-solid fa-arrow-right ml-1 text-[10px]"></i></span>
                     </div>
                 </div>
             </div>
-            {{-- Akhir Card --}}
-
-            {{-- Copy Card di atas untuk lomba lainnya... --}}
-
-            {{-- Card Lomba 2 --}}
-            <div onclick="openLombaModal('HSBC MACAU Business Case Competition', 'Oleh University of Macau', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com', '{{ asset('img/hsbc.png') }}')"
-                class="group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-
-                <div class="relative h-48 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/hsbc.png') }}"
-                        class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
-                    {{-- Badge Deadline --}}
-                    <div
-                        class="absolute top-4 left-4 rounded-lg bg-red-500 px-3 py-1 text-[10px] font-bold text-white shadow-lg">
-                        <i class="fa-solid fa-clock mr-1"></i> DEADLINE: 25 MEI
-                    </div>
-                </div>
-
-                <div class="flex flex-grow flex-col p-6">
-                    <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#A855F7]">Business Case</p>
-                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] group-hover:text-[#A855F7] transition">
-                        HSBC MACAU Business Case Competition</h3>
-                    <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i>
-                        University of Macau </p>
-                    <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center text-xs">
-                        <span class="font-bold text-slate-700">GRATIS</span>
-                        <span class="text-purple-600 font-bold">Lihat Detail <i
-                                class="fa-solid fa-arrow-right ml-1 text-[10px]"></i></span>
-                    </div>
-                </div>
+            @empty
+            <div class="col-span-full py-16 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-5xl mb-4 block text-slate-300"></i>
+                <p class="text-lg font-semibold text-slate-500">Belum Ada Kompetisi</p>
+                <p class="text-sm text-slate-400">Info kompetisi yang aktif akan segera muncul di sini.</p>
             </div>
-            {{-- Akhir Card --}}
+            @endforelse
 
-            {{-- Card Lomba 3 --}}
-            <div onclick="openLombaModal('AECIFEST 2026 Bussiness Plan & Essay', 'Oleh UPN Veteran Jaawa Timur', '25 Mei 2024', 'Lomba ini menantang mahasiswa untuk memecahkan kasus bisnis riil dari industri FMCG dengan solusi inovatif.', 'https://google.com', '{{ asset('img/ignite.jpeg') }}')"
-                class="group cursor-pointer flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-
-                <div class="relative h-48 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/ignite.jpeg') }}"
-                        class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
-                    {{-- Badge Deadline --}}
-                    <div
-                        class="absolute top-4 left-4 rounded-lg bg-red-500 px-3 py-1 text-[10px] font-bold text-white shadow-lg">
-                        <i class="fa-solid fa-clock mr-1"></i> DEADLINE: 25 MEI
-                    </div>
-                </div>
-
-                <div class="flex flex-grow flex-col p-6">
-                    <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#A855F7]">Business Case</p>
-                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] group-hover:text-[#A855F7] transition">
-                        AECIFEST 2026 Bussiness Plan & Essay</h3>
-                    <p class="text-xs text-slate-400 mb-4"><i class="fa-solid fa-building mr-1"></i>
-                        UPN Veteran Jaawa Timur</p>
-                    <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center text-xs">
-                        <span class="font-bold text-slate-700">GRATIS</span>
-                        <span class="text-purple-600 font-bold">Lihat Detail <i
-                                class="fa-solid fa-arrow-right ml-1 text-[10px]"></i></span>
-                    </div>
-                </div>
+            {{-- Client-side filter empty state --}}
+            <div id="no-filtered-results" class="col-span-full py-16 text-center text-slate-400 hidden">
+                <i class="fa-solid fa-magnifying-glass text-5xl mb-4 block text-slate-300"></i>
+                <p class="text-lg font-semibold text-slate-500">Tidak Ada Kompetisi</p>
+                <p class="text-sm text-slate-400">Tidak ada kompetisi aktif untuk kategori ini.</p>
             </div>
-            {{-- Akhir Card --}}
-
         </div>
     </div>
 
@@ -229,5 +199,40 @@
                 closeLombaModal();
             }
         });
+
+        /**
+         * LOGIKA FILTER KATEGORI LOMBA
+         * Fungsi ini memfilter kartu kompetisi berdasarkan kategori secara client-side
+         */
+        function filterCategory(category, btn) {
+            // Reset style semua tombol filter
+            document.querySelectorAll('.filter-btn').forEach(el => {
+                el.className = "filter-btn rounded-full bg-white border border-slate-200 px-6 py-2 text-sm font-bold text-[#1A2B56] hover:bg-slate-50 transition-all duration-300";
+            });
+
+            // Set style tombol filter yang diklik menjadi aktif
+            btn.className = "filter-btn rounded-full bg-[#A855F7] px-6 py-2 text-sm font-bold text-white shadow-lg shadow-purple-200 transition-all duration-300";
+
+            // Filter kartu kompetisi
+            let visibleCount = 0;
+            document.querySelectorAll('.competition-card').forEach(card => {
+                if (category === 'Semua' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Tampilkan pesan kosong jika tidak ada kartu yang cocok
+            const noResults = document.getElementById('no-filtered-results');
+            if (noResults) {
+                if (visibleCount === 0) {
+                    noResults.classList.remove('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                }
+            }
+        }
     </script>
 @endpush
