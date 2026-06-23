@@ -73,7 +73,7 @@
                 @else
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($purchasedProducts as $product)
-                            <div onclick="openProductModal('{{ str_replace(["\r", "\n", "'", '"'], ['', '', "\'", '\"'], e($product->title)) }}', '{{ str_replace(["\r", "\n", "'", '"'], ['', '', "\'", '\"'], e($product->description)) }}', '{{ $product->video_url }}', '{{ $product->whatsapp_link }}', '{{ asset($product->image_url ?? 'img/63815.png') }}')"
+                            <div onclick="openProductModal('{{ e(str_replace(["\r", "\n", "'", '"'], ['', '', "\'", '\"'], $product->title)) }}', '{{ e(str_replace(["\r", "\n", "'", '"'], [' ', ' ', "\'", '\"'], $product->description)) }}', '{{ e($product->video_url) }}', '{{ e($product->whatsapp_link) }}', '{{ e(asset($product->image_url ?? 'img/63815.png')) }}')"
                                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-150 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                                 <div class="h-40 w-full overflow-hidden bg-slate-200 relative">
                                     <img src="{{ asset($product->image_url ?? 'img/63815.png') }}"
@@ -159,8 +159,6 @@
 @push('scripts')
     <script>
         // LOGIKA DYNAMIC POP-UP DETAIL PRODUK
-        const productModal = document.getElementById('productDetailModal');
-
         function getYoutubeEmbedUrl(url) {
             if (!url) return '';
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -172,35 +170,44 @@
         }
 
         function openProductModal(title, desc, videoUrl, whatsappLink, imageSrc) {
-            document.getElementById('modalProductTitle').innerText = title;
-            document.getElementById('modalProductDesc').innerText = desc;
+            const productModal = document.getElementById('productDetailModal');
+            if (!productModal) return;
+
+            const titleEl = document.getElementById('modalProductTitle');
+            if (titleEl) titleEl.innerText = title;
+
+            const descEl = document.getElementById('modalProductDesc');
+            if (descEl) descEl.innerText = desc;
 
             const videoContainer = document.getElementById('modalVideoContainer');
-            const embedUrl = getYoutubeEmbedUrl(videoUrl);
-
-            if (embedUrl) {
-                videoContainer.innerHTML = `
-                    <iframe class="w-full aspect-video rounded-xl shadow-lg border-0" 
-                        src="${embedUrl}" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>`;
-            } else {
-                videoContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center text-center p-6 text-slate-400">
-                        <img src="${imageSrc}" class="max-h-48 w-full object-cover rounded-xl mb-4 opacity-80">
-                        <i class="fa-solid fa-video-slash text-2xl mb-2"></i>
-                        <p class="text-xs">Materi video bimbingan belum diunggah oleh mentor.</p>
-                    </div>`;
+            if (videoContainer) {
+                const embedUrl = getYoutubeEmbedUrl(videoUrl);
+                if (embedUrl) {
+                    videoContainer.innerHTML = `
+                        <iframe class="w-full aspect-video rounded-xl shadow-lg border-0" 
+                            src="${embedUrl}" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>`;
+                } else {
+                    videoContainer.innerHTML = `
+                        <div class="flex flex-col items-center justify-center text-center p-6 text-slate-400">
+                            <img src="${imageSrc}" class="max-h-48 w-full object-cover rounded-xl mb-4 opacity-80">
+                            <i class="fa-solid fa-video-slash text-2xl mb-2"></i>
+                            <p class="text-xs">Materi video bimbingan belum diunggah oleh mentor.</p>
+                        </div>`;
+                }
             }
 
             const whatsappContainer = document.getElementById('whatsappContainer');
             const whatsappBtn = document.getElementById('modalWhatsappLink');
-            if (whatsappLink) {
-                whatsappBtn.href = whatsappLink;
-                whatsappContainer.classList.remove('hidden');
-            } else {
-                whatsappContainer.classList.add('hidden');
+            if (whatsappContainer && whatsappBtn) {
+                if (whatsappLink) {
+                    whatsappBtn.href = whatsappLink;
+                    whatsappContainer.classList.remove('hidden');
+                } else {
+                    whatsappContainer.classList.add('hidden');
+                }
             }
 
             productModal.classList.remove('hidden');
@@ -209,19 +216,27 @@
         }
 
         function closeProductModal() {
-            document.getElementById('modalVideoContainer').innerHTML = '';
+            const productModal = document.getElementById('productDetailModal');
+            if (!productModal) return;
+
+            const videoContainer = document.getElementById('modalVideoContainer');
+            if (videoContainer) {
+                videoContainer.innerHTML = '';
+            }
             productModal.classList.add('hidden');
             productModal.classList.remove('flex');
             document.body.style.overflow = 'auto';
         }
 
-        productModal.addEventListener('click', function(e) {
-            if (e.target === productModal) {
-                closeProductModal();
-            }
-        });
-
         document.addEventListener('DOMContentLoaded', function() {
+            const productModal = document.getElementById('productDetailModal');
+            if (productModal) {
+                productModal.addEventListener('click', function(e) {
+                    if (e.target === productModal) {
+                        closeProductModal();
+                    }
+                });
+            }
             console.log("Dashboard product view initialized without milestone tracking.");
         });
     </script>
