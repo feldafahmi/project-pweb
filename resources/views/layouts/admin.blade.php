@@ -23,11 +23,24 @@
 <body class="min-h-screen bg-slate-50 antialiased" x-data="{ sidebarOpen: false }">
 
     @php
-        $adminLinks = [
-            ['route' => 'admin.products.index', 'label' => 'Manajemen Produk', 'icon' => 'fa-cube'],
-            ['route' => 'admin.competitions.index', 'label' => 'Manajemen Info Lomba', 'icon' => 'fa-trophy'],
-            ['route' => 'admin.users.index', 'label' => 'Manajemen Pengguna', 'icon' => 'fa-users'],
-        ];
+        $isMentor = auth()->user()->role === 'mentor';
+        $sidebarTitle = $isMentor ? 'MARK-UP Mentor' : 'MARK-UP Admin';
+        $sidebarLogoText = $isMentor ? 'Mentor' : 'Admin';
+        $homeRoute = $isMentor ? 'mentor.products.index' : 'admin.products.index';
+
+        if ($isMentor) {
+            $adminLinks = [
+                ['route' => 'mentor.products.index', 'label' => 'Manajemen Produk', 'icon' => 'fa-cube'],
+                ['route' => 'mentor.competitions.index', 'label' => 'Manajemen Info Lomba', 'icon' => 'fa-trophy'],
+                ['route' => 'mentor.mentees', 'label' => 'Daftar Mentee', 'icon' => 'fa-graduation-cap'],
+            ];
+        } else {
+            $adminLinks = [
+                ['route' => 'admin.products.index', 'label' => 'Manajemen Produk', 'icon' => 'fa-cube'],
+                ['route' => 'admin.competitions.index', 'label' => 'Manajemen Info Lomba', 'icon' => 'fa-trophy'],
+                ['route' => 'admin.users.index', 'label' => 'Manajemen Pengguna', 'icon' => 'fa-users'],
+            ];
+        }
     @endphp
 
     <div class="flex min-h-screen">
@@ -37,10 +50,10 @@
             class="fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-slate-200 bg-white transition-transform lg:static lg:translate-x-0">
 
             <div class="flex h-16 items-center border-b border-slate-100 px-6">
-                <a href="{{ route('admin.products.index') }}"
+                <a href="{{ route($homeRoute) }}"
                     class="flex items-center gap-2 text-base font-extrabold text-slate-800">
                     <img src="{{ asset('img/Markup-Logo.png') }}" alt="MARK-UP" class="h-8">
-                    <span>MARK-UP <span class="text-orange-500">Admin</span></span>
+                    <span>MARK-UP <span class="text-purple-600">{{ $sidebarLogoText }}</span></span>
                 </a>
             </div>
 
@@ -90,15 +103,17 @@
                     <div x-data="{ open: false }" @click.outside="open = false" class="relative">
                         <button type="button" @click="open = !open"
                             class="flex items-center gap-2 rounded-full border border-slate-200 py-1.5 pl-1.5 pr-3 transition hover:bg-slate-50">
-                            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">AD</span>
-                            <span class="hidden text-sm font-semibold text-slate-700 sm:inline">Admin</span>
+                            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                                {{ strtoupper(substr(auth()->user()->first_name, 0, 1) . substr(auth()->user()->last_name, 0, 1)) }}
+                            </span>
+                            <span class="hidden text-sm font-semibold text-slate-700 sm:inline">{{ auth()->user()->first_name }}</span>
                             <i class="fas fa-chevron-down text-[10px] text-slate-400"></i>
                         </button>
                         <div x-show="open" x-cloak x-transition
                             class="absolute right-0 top-full z-50 mt-2 w-52 rounded-xl border border-slate-100 bg-white py-2 shadow-lg">
                             <div class="border-b border-slate-100 px-4 pb-2 pt-1">
-                                <p class="truncate text-sm font-bold text-slate-700">Admin MARK-UP</p>
-                                <p class="truncate text-xs text-slate-500">admin@markup.id</p>
+                                <p class="truncate text-sm font-bold text-slate-700">{{ auth()->user()->name }}</p>
+                                <p class="truncate text-xs text-slate-500">{{ auth()->user()->email }}</p>
                             </div>
                             <a href="{{ url('/') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600">
                                 <i class="fas fa-globe mr-2 text-slate-400"></i>Lihat Situs

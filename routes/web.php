@@ -6,6 +6,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\MentorDashboardController;
 
 // Public Views
 Route::view('/', 'home')->name('home');
@@ -34,8 +38,15 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard (User/Student Area)
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
-        Route::view('/', 'dashboard.index')->name('index');
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
+        Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
         Route::view('/transactions', 'dashboard.transactions')->name('transactions');
+
+        // Milestone Tracker API
+        Route::get('/milestones', [MilestoneController::class, 'index'])->name('milestones.index');
+        Route::post('/milestones', [MilestoneController::class, 'store'])->name('milestones.store');
+        Route::put('/milestones/{id}/toggle', [MilestoneController::class, 'toggle'])->name('milestones.toggle');
+        Route::delete('/milestones/{id}', [MilestoneController::class, 'destroy'])->name('milestones.destroy');
         
         Route::get('/keranjang', function () {
             return view('dashboard.keranjang');
@@ -89,5 +100,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/competitions', [CompetitionController::class, 'store'])->name('competitions.store');
         Route::put('/competitions/{id}', [CompetitionController::class, 'update'])->name('competitions.update');
         Route::delete('/competitions/{id}', [CompetitionController::class, 'destroy'])->name('competitions.destroy');
+
+        // Mentees and Feedback
+        Route::get('/mentees', [MentorDashboardController::class, 'mentees'])->name('mentees');
+        Route::post('/milestones/{id}/feedback', [MentorDashboardController::class, 'giveFeedback'])->name('milestones.feedback');
     });
 });

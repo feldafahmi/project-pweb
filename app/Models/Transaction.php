@@ -6,17 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $table = 'TRANSACTIONS';
-    protected $primaryKey = 'ID_TRANSACTIONS';
-    public $timestamps = false;
-
     protected $fillable = [
-        'ID_USERS', 
-        'ID_PACKAGE', 
-        'TOTAL_AMOUNT', 
-        'PAYMENT_STATUS', 
-        'PAYMENT_METHOD', 
-        'TANGGAL_PEMBELIAN', 
-        'BUKTI_TRANSFER'
+        'user_id',
+        'product_id',
+        'status',
     ];
+
+    /**
+     * Get the user who made the transaction.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the product associated with the transaction.
+     */
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 }

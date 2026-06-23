@@ -16,11 +16,11 @@
 
 @section('content')
 <div x-data="{
-    selectedProduct: { id: '', title: '', type: '', description: '', original_price: '', price: '' },
+    selectedProduct: { id: '', title: '', type: '', description: '', original_price: '', price: '', video_url: '', whatsapp_link: '' },
     isEdit: false,
     openCreateModal() {
         this.isEdit = false;
-        this.selectedProduct = { id: '', title: '', type: '', description: '', original_price: '', price: '' };
+        this.selectedProduct = { id: '', title: '', type: '', description: '', original_price: '', price: '', video_url: '', whatsapp_link: '' };
         $dispatch('open-modal', { name: 'product-form' });
     },
     openEditModal(prod) {
@@ -74,7 +74,9 @@
                                 type: '{{ $product->type }}',
                                 description: '{{ addslashes($product->description) }}',
                                 original_price: {{ $product->original_price ?? 0 }},
-                                price: {{ $product->price ?? 0 }}
+                                price: {{ $product->price ?? 0 }},
+                                video_url: '{{ addslashes($product->video_url ?? '') }}',
+                                whatsapp_link: '{{ addslashes($product->whatsapp_link ?? '') }}'
                             })" />
                         <form action="{{ (request()->is('admin/*') ? '/admin' : '/mentor') }}/products/{{ $product->id }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
                             @csrf
@@ -131,6 +133,18 @@
                 <x-admin.field label="Harga Diskon" name="price" :required="true">
                     <input type="number" id="price" name="price" x-model="selectedProduct.price" min="0" placeholder="199000"
                         class="admin-input" required>
+                </x-admin.field>
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <x-admin.field label="Link Video YouTube" name="video_url" hint="Contoh: https://www.youtube.com/watch?v=xxxx">
+                    <input type="url" id="video_url" name="video_url" x-model="selectedProduct.video_url" placeholder="https://www.youtube.com/watch?v=..."
+                        class="admin-input">
+                </x-admin.field>
+
+                <x-admin.field label="Link Grup WhatsApp" name="whatsapp_link" hint="Contoh: https://chat.whatsapp.com/xxxx">
+                    <input type="url" id="whatsapp_link" name="whatsapp_link" x-model="selectedProduct.whatsapp_link" placeholder="https://chat.whatsapp.com/..."
+                        class="admin-input">
                 </x-admin.field>
             </div>
         </form>

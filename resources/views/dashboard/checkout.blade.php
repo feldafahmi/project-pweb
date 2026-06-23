@@ -155,9 +155,37 @@
         }
 
         function processPayment() {
-            alert('Simulasi Pembayaran Berhasil! Kelas mentoring akan teraktivasi di dashboard.');
-            localStorage.removeItem('markup_cart'); // Kosongkan keranjang setelah dibeli
-            window.location.href = '/dashboard'; // Balik ke halaman utama dashboard
+            const cart = JSON.parse(localStorage.getItem('markup_cart')) || [];
+            if (cart.length === 0) {
+                alert('Keranjang belanja kosong!');
+                window.location.href = '/produk';
+                return;
+            }
+
+            const productIds = cart.map(item => item.id);
+
+            fetch('{{ route('dashboard.checkout.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ product_ids: productIds })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Simulasi Pembayaran Berhasil! Kelas mentoring akan teraktivasi di dashboard.');
+                    localStorage.removeItem('markup_cart'); // Kosongkan keranjang setelah dibeli
+                    window.location.href = '/dashboard'; // Balik ke halaman utama dashboard
+                } else {
+                    alert('Terjadi kesalahan: ' + (data.message || 'Gagal memproses pembayaran.'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan koneksi.');
+            });
         }
 
         // Eksekusi kalkulator billing kasir pertama kali saat dokumen dimuat

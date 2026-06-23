@@ -106,6 +106,8 @@ class ProductController extends Controller
             'original_price' => 'required|integer|min:0',
             'price' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
+            'video_url' => 'nullable|string|max:255',
+            'whatsapp_link' => 'nullable|string|max:255',
         ]);
 
         if ($request->hasFile('image')) {
@@ -134,6 +136,8 @@ class ProductController extends Controller
             'original_price' => 'required|integer|min:0',
             'price' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
+            'video_url' => 'nullable|string|max:255',
+            'whatsapp_link' => 'nullable|string|max:255',
         ]);
 
         if ($request->hasFile('image')) {

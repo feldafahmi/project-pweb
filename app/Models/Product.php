@@ -22,6 +22,8 @@ class Product extends Model
         'is_featured',
         'is_bestseller',
         'image_url',
+        'video_url',
+        'whatsapp_link',
         'author_id',
     ];
 
