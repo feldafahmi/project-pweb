@@ -101,8 +101,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/competitions/{id}', [CompetitionController::class, 'update'])->name('competitions.update');
         Route::delete('/competitions/{id}', [CompetitionController::class, 'destroy'])->name('competitions.destroy');
 
-        // Mentees and Feedback
+        // Mentees
         Route::get('/mentees', [MentorDashboardController::class, 'mentees'])->name('mentees');
-        Route::post('/milestones/{id}/feedback', [MentorDashboardController::class, 'giveFeedback'])->name('milestones.feedback');
     });
 });
