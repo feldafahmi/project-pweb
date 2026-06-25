@@ -6,8 +6,6 @@ use App\Models\BootcampBatch;
 use App\Models\CurriculumItem;
 use App\Models\CurriculumSection;
 use App\Models\Mentor;
-use App\Models\MentorReview;
-use App\Models\MentorSlot;
 use App\Models\Product;
 use App\Models\ProductChapter;
 use App\Models\ProductReview;
@@ -49,48 +47,6 @@ class ProductDetailSeeder extends Seeder
                 ],
                 'response_time' => '< 2j',
             ]);
-
-            // Mentor slots — idempotent via updateOrCreate (mentor_id + day + time unik)
-            $slots = [
-                ['day' => 'Sen, 27 Apr', 'time' => '09:00', 'duration' => '60 mnt', 'date' => '2026-04-27'],
-                ['day' => 'Sen, 27 Apr', 'time' => '14:00', 'duration' => '60 mnt', 'date' => '2026-04-27'],
-                ['day' => 'Sel, 28 Apr', 'time' => '10:00', 'duration' => '90 mnt', 'date' => '2026-04-28'],
-                ['day' => 'Rab, 29 Apr', 'time' => '13:00', 'duration' => '60 mnt', 'date' => '2026-04-29'],
-                ['day' => 'Kam, 30 Apr', 'time' => '15:30', 'duration' => '60 mnt', 'date' => '2026-04-30'],
-            ];
-            foreach ($slots as $slot) {
-                MentorSlot::updateOrCreate(
-                    [
-                        'mentor_id' => $rizka->id,
-                        'day'       => $slot['day'],
-                        'time'      => $slot['time'],
-                    ],
-                    [
-                        'duration'  => $slot['duration'],
-                        'is_booked' => false,
-                        'date'      => $slot['date'],
-                    ]
-                );
-            }
-
-            // Mentor reviews — pakai user_id null biar tidak collision dgn auth user lain
-            $reviewerNadia = User::firstOrCreate(
-                ['email' => 'nadia.reviewer@example.com'],
-                ['name' => 'Nadia P.', 'password' => Hash::make('password')]
-            );
-            $reviewerBima = User::firstOrCreate(
-                ['email' => 'bima.reviewer@example.com'],
-                ['name' => 'Bima R.', 'password' => Hash::make('password')]
-            );
-
-            MentorReview::updateOrCreate(
-                ['mentor_id' => $rizka->id, 'user_id' => $reviewerNadia->id],
-                ['stars' => 5, 'text' => 'Mentor terbaik! Sesinya jelas, langsung praktek, hasil tim kami juara.']
-            );
-            MentorReview::updateOrCreate(
-                ['mentor_id' => $rizka->id, 'user_id' => $reviewerBima->id],
-                ['stars' => 5, 'text' => 'Feedback Kak Rizka tajam banget. Pitch deck kami dirombak total dan menang.']
-            );
         }
 
         // ── 1. KELAS — Winner Class: Business Case Mastery ───────────────

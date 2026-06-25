@@ -30,74 +30,73 @@ class MentorController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * POST /api/admin/mentors (admin only)
      */
     public function store(Request $request)
     {
-        //
+        $data = $this->validateData($request);
+        $mentor = Mentor::create($data);
+
+        return response()->json([
+            'message' => 'Mentor berhasil dibuat.',
+            'data'    => $mentor,
+        ], 201);
     }
 
     /**
      * GET /api/mentors/{mentor}
      *
-     * Return single mentor lengkap dengan slots (yang available),
-     * reviews, plus rating_distribution & total_reviews.
+     * Return single mentor beserta detail profilnya.
      */
     public function show(Mentor $mentor)
     {
-        $mentor->load([
-            'slots'   => fn ($q) => $q->limit(10),
-            'reviews' => fn ($q) => $q->limit(10),
-        ]);
-
-        $allReviews = $mentor->reviews()->get();
-        $totalReviews = $allReviews->count();
-
-        $distribution = collect([5, 4, 3, 2, 1])->map(function ($s) use ($allReviews, $totalReviews) {
-            if ($totalReviews === 0) {
-                return 0;
-            }
-            $count = $allReviews->where('stars', $s)->count();
-            return (int) round(($count / $totalReviews) * 100);
-        })->values();
-
         return response()->json([
-            'data' => array_merge($mentor->toArray(), [
-                'rating_distribution' => $distribution,
-                'total_reviews'       => $totalReviews,
-            ]),
+            'data' => $mentor,
         ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Mentor $mentor)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * PUT/PATCH /api/admin/mentors/{mentor} (admin only)
      */
     public function update(Request $request, Mentor $mentor)
     {
-        //
+        $data = $this->validateData($request, $mentor->id);
+        $mentor->update($data);
+
+        return response()->json([
+            'message' => 'Mentor berhasil diperbarui.',
+            'data'    => $mentor,
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE /api/admin/mentors/{mentor} (admin only)
      */
     public function destroy(Mentor $mentor)
     {
-        //
+        $mentor->delete();
+
+        return response()->json([
+            'message' => 'Mentor berhasil dihapus.',
+        ]);
+    }
+
+    private function validateData(Request $request, ?int $id = null): array
+    {
+        $req = $id !== null ? 'sometimes' : 'required';
+
+        return $request->validate([
+            'name'              => [$req, 'string', 'max:255'],
+            'title'             => [$req, 'string', 'max:255'],
+            'about'             => ['nullable', 'string'],
+            'highlights'        => ['nullable', 'array'],
+            'response_time'     => ['nullable', 'string', 'max:50'],
+            'rating'            => ['nullable', 'numeric', 'between:0,5'],
+            'sessions'          => ['nullable', 'integer', 'min:0'],
+            'available'         => ['nullable', 'boolean'],
+            'price_per_session' => [$req, 'integer', 'min:0'],
+            'tags'              => ['nullable', 'array'],
+            'avatar_url'        => ['nullable', 'string', 'max:1000'],
+        ]);
     }
 }

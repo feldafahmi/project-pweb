@@ -26,17 +26,4 @@ class Mentor extends Model
         'tags'       => 'array',
         'highlights' => 'array',
     ];
-
-    public function slots()
-    {
-        return $this->hasMany(MentorSlot::class)
-            ->where('is_booked', false)
-            ->orderBy('date')
-            ->orderBy('time');
-    }
-
-    public function reviews()
-    {
-        return $this->hasMany(MentorReview::class)->with('user:id,name')->latest();
-    }
 }
