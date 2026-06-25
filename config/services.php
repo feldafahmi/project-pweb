@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'midtrans' => [
+        'server_key'    => env('MIDTRANS_SERVER_KEY'),
+        'client_key'    => env('MIDTRANS_CLIENT_KEY'),
+        'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
+    ],
+
+    // Google Sign-In: client_id WAJIB diisi dengan **Web client ID** dari
+    // Google Cloud Console. ID token yang dikirim aplikasi Flutter memakai
+    // serverClientId = Web client ID, jadi audience-nya harus cocok di sini.
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+    ],
+
 ];
