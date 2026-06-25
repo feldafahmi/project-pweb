@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Sitemap - MARK-UP</title>
+<style>
+  :root {
+    --navy: #1a2b56;
+    --yellow: #f5eb5e;
+    --gray: #f4f4f7;
+    --border: #d8dbe5;
+    --text: #2b2f44;
+    --muted: #6b7188;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: var(--text);
+    padding: 40px 30px;
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding-bottom: 24px;
+    border-bottom: 3px solid var(--yellow);
+  }
+  header h1 {
+    color: var(--navy);
+    font-size: 32px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  header .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* Root node */
+  .tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .root {
+    background: var(--navy);
+    color: #fff;
+    padding: 18px 40px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(26, 43, 86, 0.25);
+    border: 3px solid var(--yellow);
+    margin-bottom: 0;
+  }
+  .root small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* Vertical connector from root */
+  .connector-v {
+    width: 3px;
+    height: 30px;
+    background: var(--navy);
+  }
+
+  /* Sections row (4 columns) */
+  .sections {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    position: relative;
+    padding-top: 30px;
+  }
+  /* Horizontal line connecting all sections */
+  .sections::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 12.5%;
+    right: 12.5%;
+    height: 3px;
+    background: var(--navy);
+  }
+  .section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* vertical drop from horizontal line to each section header */
+  .section::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 30px;
+    background: var(--navy);
+  }
+
+  .section-header {
+    background: var(--yellow);
+    color: var(--navy);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border: 2px solid var(--navy);
+  }
+  .section-header small {
+    display: block;
+    font-weight: 500;
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  .pages {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+  .pages::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 3px;
+    height: 20px;
+    background: var(--navy);
+  }
+
+  .page-node {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-left: 5px solid var(--navy);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .page-node:hover {
+    border-color: var(--navy);
+    transform: translateX(2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  }
+  .page-node .name {
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+  .page-node .url {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+  }
+
+  /* Sub-page indicator */
+  .page-node.child {
+    margin-left: 18px;
+    border-left-color: var(--yellow);
+    border-left-width: 5px;
+    position: relative;
+  }
+  .page-node.child::before {
+    content: '↳';
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--navy);
+    font-weight: bold;
+  }
+
+  /* Legend */
+  .legend {
+    margin-top: 50px;
+    background: var(--gray);
+    padding: 20px 24px;
+    border-radius: 10px;
+    border-left: 5px solid var(--yellow);
+  }
+  .legend h3 {
+    color: var(--navy);
+    font-size: 15px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    font-size: 13px;
+  }
+  .legend-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .legend-item .num {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .legend-item .label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    body { padding: 20px; }
+    .page-node:hover { transform: none; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>SITEMAP WEBSITE MARK-UP</h1>
+    <div class="subtitle">EdTech Platform · Mentoring &amp; Business Case Competition</div>
+  </header>
+
+  <div class="tree">
+
+    <div class="root">
+      MARK-UP
+      <small>https://[domain]/</small>
+    </div>
+
+    <div class="connector-v"></div>
+
+    <div class="sections">
+
+      <!-- PUBLIC -->
+      <div class="section">
+        <div class="section-header">
+          PUBLIC PAGES
+          <small>Halaman Umum</small>
+        </div>
+        <div class="pages">
+          <div class="page-node">
+            <div class="name">Home</div>
+            <div class="url">/</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Tentang Kami</div>
+            <div class="url">/about</div>
+          </div>
+          <div class="page-node child">
+            <div class="name">Profil Mentor</div>
+            <div class="url">/tentang-kami/profil-mentor</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Kontak</div>
+            <div class="url">/contact</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Produk</div>
+            <div class="url">/produk</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Info Lomba</div>
+            <div class="url">/info-lomba</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTH -->
+      <div class="section">
+        <div class="section-header">
+          AUTH
+          <small>Otentikasi</small>
+        </div>
+        <div class="pages">
+          <div class="page-node">
+            <div class="name">Login</div>
+            <div class="url">/login</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Register</div>
+            <div class="url">/register</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER DASHBOARD -->
+      <div class="section">
+        <div class="section-header">
+          USER DASHBOARD
+          <small>Area Pengguna</small>
+        </div>
+        <div class="pages">
+          <div class="page-node">
+            <div class="name">Beranda Dashboard</div>
+            <div class="url">/dashboard</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Keranjang</div>
+            <div class="url">/dashboard/keranjang</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Transaksi</div>
+            <div class="url">/dashboard/transactions</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Profil</div>
+            <div class="url">/dashboard/profile</div>
+          </div>
+          <div class="page-node child">
+            <div class="name">Ubah Password</div>
+            <div class="url">/dashboard/profile/password</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="section">
+        <div class="section-header">
+          ADMIN PANEL
+          <small>Area Administrator</small>
+        </div>
+        <div class="pages">
+          <div class="page-node">
+            <div class="name">Kelola Produk</div>
+            <div class="url">/admin/products</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Kelola Lomba</div>
+            <div class="url">/admin/competitions</div>
+          </div>
+          <div class="page-node">
+            <div class="name">Kelola Pengguna</div>
+            <div class="url">/admin/users</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="legend">
+    <h3>Ringkasan</h3>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="num">6</div>
+        <div class="label">Halaman Publik</div>
+      </div>
+      <div class="legend-item">
+        <div class="num">2</div>
+        <div class="label">Halaman Auth</div>
+      </div>
+      <div class="legend-item">
+        <div class="num">5</div>
+        <div class="label">Halaman User</div>
+      </div>
+      <div class="legend-item">
+        <div class="num">3</div>
+        <div class="label">Halaman Admin</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Dokumen sitemap MARK-UP &middot; Total 16 halaman aktif &middot; Dibuat untuk keperluan laporan
+  </footer>
+
+</div>
+</body>
+</html>
