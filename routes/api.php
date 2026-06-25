@@ -2,36 +2,30 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DebugController;
-use App\Http\Controllers\VideoController;
 
 // Endpoint: /api/
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
-// Route::get('/debug-db', [DebugController::class, 'checkDb']);
-
-// Route::get('/mentor', [DebugController::class, 'checkMentor']);
-
-// Route::apiResource('videos', VideoController::class);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UploadController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/auth/google', [AuthController::class, 'google']);
 
 // Public endpoints — tidak perlu token
 Route::get('/competitions', [CompetitionController::class, 'index']);
 Route::get('/competitions/{id}', [CompetitionController::class, 'show']);
 Route::get('products/{product}/reviews', [ReviewController::class, 'index']);
+
+// Webhook Midtrans — dipanggil server-to-server (tanpa token), diamankan via signature.
+Route::post('/midtrans/notification', [TransactionController::class, 'notification']);
 
 // Media proxy: menyajikan file dari /public lewat Laravel agar dapat header
 // CORS (HandleCors otomatis untuk path api/*). Diperlukan oleh Flutter Web
@@ -52,7 +46,12 @@ Route::get('/media/{path}', function (string $path) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    // Profil user yang sedang login
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+
     Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/{product}/content', [ProductController::class, 'content']);
     Route::get('/products/{product}', [ProductController::class, 'show']);
 
     Route::get('/mentors', [MentorController::class, 'index']);
@@ -70,7 +69,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/transactions', [TransactionController::class, 'index']);
     Route::post('/transactions', [TransactionController::class, 'store']);
-    Route::post('/transactions/{transaction}/proof', [TransactionController::class, 'uploadProof']);
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show']);
+    Route::post('/transactions/{transaction}/pay', [TransactionController::class, 'pay']);
+    Route::post('/transactions/{transaction}/sync-status', [TransactionController::class, 'syncStatus']);
     Route::get('/my-products', [TransactionController::class, 'myProductIds']);
+    Route::get('/my-learning', [TransactionController::class, 'myProducts']);
+
+    // ── Admin only (role === 'admin') ────────────────────────────────────
+    // Hanya endpoint tulis; pembacaan tetap lewat route di atas.
+    Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::apiResource('products', ProductController::class)
+            ->only(['store', 'update', 'destroy']);
+        Route::apiResource('mentors', MentorController::class)
+            ->only(['store', 'update', 'destroy']);
+        Route::apiResource('competitions', CompetitionController::class)
+            ->only(['store', 'update', 'destroy']);
+        Route::post('uploads', [UploadController::class, 'store']);
+    });
 });

@@ -22,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'google_id',
+        'avatar',
     ];
 
     // Jangan pernah kirim hash password / remember_token di response JSON
