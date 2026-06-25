@@ -60,8 +60,8 @@ class TransactionController extends Controller
                 'code'           => $this->generateCode(),
                 'total_amount'   => $total,
                 'payment_method' => $validated['payment_method'],
-                // Validasi manual: transaksi mulai 'pending'. User mengunggah bukti
-                // bayar, lalu admin memverifikasi & set status 'paid' (lewat DB/web).
+                // Transaksi mulai 'pending' hingga Midtrans mengonfirmasi lunas
+                // (lewat webhook /midtrans/notification atau endpoint sync-status).
                 'status'         => 'pending',
                 'paid_at'        => null,
             ]);

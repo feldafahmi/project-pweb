@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('transactions', function (Blueprint $table) {
             // Token Snap Midtrans (untuk SDK / embed) dan URL halaman bayar (redirect_url).
             // Diisi saat checkout; webhook mengisi midtrans_status mentah dari Midtrans.
-            $table->string('snap_token')->nullable()->after('payment_proof');
+            $table->string('snap_token')->nullable()->after('paid_at');
             $table->string('payment_url')->nullable()->after('snap_token');
             $table->string('midtrans_status')->nullable()->after('payment_url');
         });
