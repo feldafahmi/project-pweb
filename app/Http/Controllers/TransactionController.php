@@ -6,8 +6,10 @@ use App\Http\Resources\TransactionResource;
 use App\Models\CartItem;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -82,55 +84,97 @@ class TransactionController extends Controller
             return $trx->load('items');
         });
 
+        // Generate token Snap Midtrans agar mobile/web bisa langsung membayar.
+        // Kalau gagal (mis. key belum diisi), transaksi tetap dibuat — user bisa
+        // retry lewat endpoint /pay, atau pakai flow QRIS manual sebagai fallback.
+        try {
+            app(MidtransService::class)->createSnap($transaction);
+            $transaction->refresh()->load('items');
+        } catch (\Throwable $e) {
+            Log::warning('Midtrans createSnap gagal saat checkout: '.$e->getMessage());
+        }
+
         return response()->json([
             'data' => new TransactionResource($transaction),
         ], 201);
     }
 
     /**
-     * POST /api/transactions/{transaction}/proof
-     * User mengunggah bukti bayar untuk transaksinya yang masih 'pending'.
-     * Status TIDAK berubah otomatis — admin yang memverifikasi manual.
+     * POST /api/transactions/{transaction}/pay
+     * Generate (atau regenerate) token Snap untuk transaksi pending.
+     * Dipakai untuk retry pembayaran dari halaman detail.
      */
-    public function uploadProof(Request $request, Transaction $transaction)
+    public function pay(Request $request, Transaction $transaction, MidtransService $midtrans)
     {
-        if ($transaction->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Tidak diizinkan.'], 403);
+        abort_if($transaction->user_id !== $request->user()->id, 403, 'Tidak diizinkan.');
+        abort_if($transaction->status === 'paid', 422, 'Transaksi sudah lunas.');
+
+        // Reuse token Snap yang sudah ada agar tidak kena error duplicate order_id
+        // di Midtrans (order_id = code, tidak boleh dipakai ulang untuk transaksi
+        // baru). Hanya generate bila belum pernah dibuat — mis. checkout-nya gagal.
+        if (! $transaction->payment_url) {
+            $midtrans->createSnap($transaction);
+            $transaction->refresh();
         }
 
-        if ($transaction->status !== 'pending') {
-            return response()->json([
-                'message' => 'Bukti hanya bisa diunggah saat transaksi menunggu pembayaran.',
-            ], 422);
-        }
-
-        $request->validate([
-            'proof' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+        return response()->json([
+            'data' => [
+                'snap_token'  => $transaction->snap_token,
+                'payment_url' => $transaction->payment_url,
+            ],
         ]);
+    }
 
-        $file = $request->file('proof');
-        $dir = public_path('uploads/payment_proofs');
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
+    /**
+     * POST /api/midtrans/notification
+     * Webhook server-to-server dari Midtrans. TANPA auth — diamankan lewat
+     * verifikasi signature. Satu-satunya sumber kebenaran status pembayaran.
+     */
+    public function notification(Request $request, MidtransService $midtrans)
+    {
+        $payload = $request->all();
+
+        if (! $midtrans->isValidSignature($payload)) {
+            Log::warning('Midtrans webhook: signature tidak valid', ['order_id' => $payload['order_id'] ?? null]);
+            return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        // Hapus bukti lama bila user mengunggah ulang.
-        if ($transaction->payment_proof) {
-            $old = public_path(ltrim($transaction->payment_proof, '/'));
-            if (is_file($old)) {
-                @unlink($old);
+        $trx = Transaction::where('code', $payload['order_id'] ?? '')->first();
+        if (! $trx) {
+            return response()->json(['message' => 'Transaksi tidak ditemukan.'], 404);
+        }
+
+        $applied = $midtrans->applyStatus($trx, $payload);
+
+        if (! $applied) {
+            Log::info('Midtrans webhook diabaikan (sudah paid)', [
+                'order_id' => $trx->code,
+                'incoming' => $payload['transaction_status'] ?? null,
+            ]);
+        }
+
+        return response()->json(['message' => 'OK']);
+    }
+
+    /**
+     * POST /api/transactions/{transaction}/sync-status
+     * Tarik status transaksi langsung dari Midtrans (Status API) dan update DB.
+     * Fallback bila notifikasi webhook meleset — dipakai oleh tombol
+     * "Cek Status Pembayaran" di app, jadi status tidak bergantung webhook saja.
+     */
+    public function syncStatus(Request $request, Transaction $transaction, MidtransService $midtrans)
+    {
+        abort_if($transaction->user_id !== $request->user()->id, 403, 'Tidak diizinkan.');
+
+        // Sudah final 'paid' → tidak perlu tanya Midtrans lagi.
+        if ($transaction->status !== 'paid') {
+            $payload = $midtrans->fetchStatus($transaction->code);
+            if ($payload) {
+                $midtrans->applyStatus($transaction, $payload);
             }
         }
 
-        $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
-        $filename = 'proof_'.$transaction->id.'_'.time().'.'.$ext;
-        $file->move($dir, $filename);
-
-        $transaction->update([
-            'payment_proof' => '/uploads/payment_proofs/'.$filename,
-        ]);
-
-        $transaction->load('items');
+        $transaction->refresh()->load('items');
 
         return response()->json([
             'data' => new TransactionResource($transaction),
@@ -171,6 +215,34 @@ class TransactionController extends Controller
         ->values();
 
         return response()->json(['data' => $ids]);
+    }
+
+    /**
+     * GET /api/my-learning
+     * Produk yang sudah dimiliki user (dari transaksi paid), lengkap dengan
+     * judul/tipe/gambar untuk halaman "Produk Saya". Dedup per product_id dan
+     * TIDAK bergantung pada pagination riwayat — sumber kebenaran sendiri.
+     */
+    public function myProducts(Request $request)
+    {
+        $items = TransactionItem::whereHas('transaction', function ($q) use ($request) {
+            $q->where('user_id', $request->user()->id)
+              ->where('status', 'paid');
+        })
+        ->whereNotNull('product_id')
+        ->latest('id')          // ambil snapshot terbaru per produk
+        ->get()
+        ->unique('product_id')  // satu entri per produk
+        ->values();
+
+        return response()->json([
+            'data' => $items->map(fn ($item) => [
+                'product_id'        => $item->product_id,
+                'product_title'     => $item->product_title,
+                'product_type'      => $item->product_type,
+                'product_image_url' => $item->product_image_url,
+            ])->all(),
+        ]);
     }
 
     private function generateCode(): string
