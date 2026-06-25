@@ -5,61 +5,88 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
+/**
+ * Controller WEB (Blade) untuk profil user. Endpoint API ada di
+ * App\Http\Controllers\Api\ProfileController.
+ */
 class ProfileController extends Controller
 {
     /**
-     * GET /api/profile
-     *
-     * Kembalikan data user yang sedang login. Dipakai mobile untuk
-     * me-refresh nama/email/role agar sinkron dengan server.
+     * Tampilkan halaman profil user.
      */
-    public function show(Request $request)
+    public function index()
     {
-        return response()->json(['user' => $request->user()]);
+        return view('dashboard.profile.index');
     }
 
     /**
-     * PUT /api/profile
-     *
-     * Perbarui nama/email. Ganti password bersifat opsional: bila
-     * `password` dikirim, `current_password` wajib benar dan
-     * `password_confirmation` harus cocok.
+     * Perbarui informasi profil user.
      */
     public function update(Request $request)
     {
-        $user = $request->user();
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
 
         $data = $request->validate([
-            'name'  => 'required|string|min:3|max:255',
+            'username' => [
+                'required',
+                'string',
+                'min:3',
+                'max:50',
+                Rule::unique('users', 'username')->ignore($user->id),
+            ],
             'email' => [
                 'required',
+                'string',
                 'email',
+                'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-            // Password opsional — hanya divalidasi bila dikirim & tidak kosong.
-            'current_password' => 'nullable|required_with:password|string',
-            'password'         => 'nullable|string|min:8|confirmed',
+            'first_name'  => 'required|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'institution' => 'nullable|string|max:255',
         ]);
 
-        // Jika user ingin ganti password, verifikasi password lama dulu.
-        if (! empty($data['password'])) {
-            if (! Hash::check($data['current_password'], $user->password)) {
-                throw ValidationException::withMessages([
-                    'current_password' => ['Password saat ini salah.'],
-                ]);
-            }
-            $user->password = Hash::make($data['password']);
+        $user->update($data);
+
+        return redirect()->route('dashboard.profile.index')->with('success', 'Informasi profil Anda berhasil diperbarui.');
+    }
+
+    /**
+     * Tampilkan form ganti password.
+     */
+    public function passwordIndex()
+    {
+        return view('dashboard.profile.password');
+    }
+
+    /**
+     * Perbarui password user.
+     */
+    public function passwordUpdate(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password'     => 'required|string|min:8|confirmed',
+        ], [
+            'new_password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            'new_password.min'       => 'Password baru minimal 8 karakter.',
+        ]);
+
+        if (! Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors([
+                'current_password' => 'Password saat ini tidak cocok dengan data kami.',
+            ]);
         }
 
-        $user->name  = $data['name'];
-        $user->email = $data['email'];
-        $user->save();
-
-        return response()->json([
-            'message' => 'Profil berhasil diperbarui',
-            'user'    => $user,
+        $user->update([
+            'password' => Hash::make($request->new_password),
         ]);
+
+        return redirect()->route('dashboard.profile.password')->with('success', 'Password Anda berhasil diperbarui.');
     }
 }

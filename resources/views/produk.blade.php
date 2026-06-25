@@ -39,90 +39,30 @@
         </div>
 
         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-
-            {{-- CARD 1 --}}
-            <div onclick="openModal(1, 'Bundle: Winner Class dan Module (Debate)', 'Gabungan materi Winner Class (Video on Demand) + modul eksklusif Tips & Trik Juara Lomba UI/UX yang dirancang langsung untuk kamu yang ingin menang.', '149.000', '99.000', '{{ asset('img/63815.png') }}')"
+            @foreach($products as $product)
+            {{-- CARD --}}
+            <div onclick="openModal({{ $product->id }}, '{{ str_replace(["\r", "\n", "'", '"'], ["", "", "\'", '\"'], e($product->title)) }}', '{{ str_replace(["\r", "\n", "'", '"'], ["", "", "\'", '\"'], e($product->description)) }}', '{{ number_format($product->original_price ?? $product->price * 1.5, 0, ',', '.') }}', '{{ number_format($product->price, 0, ',', '.') }}', '{{ asset($product->image_url ?? 'img/63815.png') }}')"
                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                 <div class="h-56 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/63815.png') }}" alt="Produk 1"
+                    <img src="{{ asset($product->image_url ?? 'img/63815.png') }}" alt="{{ $product->title }}"
                         class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
                 </div>
                 <div class="flex flex-grow flex-col p-6">
-                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] line-clamp-2">Bundle: Winner Class dan
-                        Module (Debate)</h3>
+                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] line-clamp-2">{{ $product->title }}</h3>
                     <p class="mb-5 flex-grow text-sm leading-relaxed text-slate-500 line-clamp-3">
-                        Gabungan materi Winner Class (Video on Demand) + modul eksklusif Tips & Trik Juara Lomba UI/UX yang
-                        dirancang langsung untuk kamu yang ingin menang.
+                        {{ $product->description }}
                     </p>
                     <div class="border-t border-slate-100 pt-4">
-                        <span class="block text-xs text-slate-400 line-through">149.000</span>
-                        <span class="block text-xl font-extrabold text-[#A855F7]">99.000</span>
+                        @if($product->original_price)
+                            <span class="block text-xs text-slate-400 line-through">{{ number_format($product->original_price, 0, ',', '.') }}</span>
+                        @else
+                            <span class="block text-xs text-slate-400 line-through">{{ number_format($product->price * 1.5, 0, ',', '.') }}</span>
+                        @endif
+                        <span class="block text-xl font-extrabold text-[#A855F7]">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
-
-            {{-- CARD 2 --}}
-            <div onclick="openModal(2, 'Business Case Mastery Class', 'Pelajari framework top tier consulting firm (McKinsey, BCG, Bain) untuk memecahkan kasus bisnis kompleks dalam hitungan menit.', '299.000', '199.000', '{{ asset('img/63815.png') }}')"
-                class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <div class="h-56 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/63815.png') }}" alt="Produk 2"
-                        class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
-                </div>
-                <div class="flex flex-grow flex-col p-6">
-                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] line-clamp-2">Business Case Mastery Class
-                    </h3>
-                    <p class="mb-5 flex-grow text-sm leading-relaxed text-slate-500 line-clamp-3">
-                        Pelajari framework top tier consulting firm (McKinsey, BCG, Bain) untuk memecahkan kasus bisnis
-                        kompleks dalam hitungan menit.
-                    </p>
-                    <div class="border-t border-slate-100 pt-4">
-                        <span class="block text-xs text-slate-400 line-through">299.000</span>
-                        <span class="block text-xl font-extrabold text-[#A855F7]">199.000</span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- CARD 3 --}}
-            <div onclick="openModal(3, 'Pitch Deck Design Secrets', 'Modul komprehensif cara mendesain slide presentasi yang persuasif dan memukau dewan juri kompetisi bisnis.', '99.000', '49.000', '{{ asset('img/63815.png') }}')"
-                class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <div class="h-56 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/63815.png') }}" alt="Produk 3"
-                        class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
-                </div>
-                <div class="flex flex-grow flex-col p-6">
-                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] line-clamp-2">Pitch Deck Design Secrets
-                    </h3>
-                    <p class="mb-5 flex-grow text-sm leading-relaxed text-slate-500 line-clamp-3">
-                        Modul komprehensif cara mendesain slide presentasi yang persuasif dan memukau dewan juri kompetisi
-                        bisnis.
-                    </p>
-                    <div class="border-t border-slate-100 pt-4">
-                        <span class="block text-xs text-slate-400 line-through">99.000</span>
-                        <span class="block text-xl font-extrabold text-[#A855F7]">49.000</span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- CARD 4 --}}
-            <div onclick="openModal(4, 'Live Mentoring: Mock Interview', 'Simulasi wawancara 1-on-1 dengan mentor expert dari Big 4 Company lengkap dengan feedback tertulis.', '499.000', '349.000', '{{ asset('img/63815.png') }}')"
-                class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <div class="h-56 w-full overflow-hidden bg-slate-200">
-                    <img src="{{ asset('img/63815.png') }}" alt="Produk 4"
-                        class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
-                </div>
-                <div class="flex flex-grow flex-col p-6">
-                    <h3 class="mb-2 text-lg font-bold leading-tight text-[#1A2B56] line-clamp-2">Live Mentoring: Mock
-                        Interview</h3>
-                    <p class="mb-5 flex-grow text-sm leading-relaxed text-slate-500 line-clamp-3">
-                        Simulasi wawancara 1-on-1 dengan mentor expert dari Big 4 Company lengkap dengan feedback tertulis.
-                    </p>
-                    <div class="border-t border-slate-100 pt-4">
-                        <span class="block text-xs text-slate-400 line-through">499.000</span>
-                        <span class="block text-xl font-extrabold text-[#A855F7]">349.000</span>
-                    </div>
-                </div>
-            </div>
-
+            @endforeach
         </div>
     </div>
 

@@ -22,6 +22,8 @@ class Product extends Model
         'is_featured',
         'is_bestseller',
         'image_url',
+        'video_url',
+        'whatsapp_link',
         'author_id',
     ];
 
@@ -32,6 +34,20 @@ class Product extends Model
         'learnings'     => 'array',
         'includes'      => 'array',
     ];
+
+    protected $appends = [
+        'image',
+    ];
+
+    public function getImageAttribute()
+    {
+        return $this->image_url;
+    }
+
+    public function setImageAttribute($value)
+    {
+        $this->attributes['image_url'] = $value;
+    }
 
     public function author()
     {

@@ -48,19 +48,62 @@
                 <form method="POST" action="" class="space-y-5" data-auth-form="register" novalidate>
                     @csrf
 
-                    {{-- Input Full Name --}}
+                    {{-- Input Username --}}
                     <div>
-                        <label for="name" class="mb-1.5 block text-xs font-medium text-gray-400">Full Name</label>
+                        <label for="username" class="mb-1.5 block text-xs font-medium text-gray-400">Username</label>
                         <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
                             data-field-wrapper>
-                            <i class="far fa-user text-gray-400"></i>
-                            <input type="text" id="name" name="name" required minlength="3"
-                                placeholder="Masukkan nama lengkap"
+                            <i class="fas fa-at text-gray-400"></i>
+                            <input type="text" id="username" name="username" required minlength="3"
+                                placeholder="Masukkan username"
                                 class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
-                                data-validate="name"
-                                value="{{ old('name') }}">
+                                data-validate="username"
+                                value="{{ old('username') }}">
                         </div>
                         <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
+                    </div>
+
+                    {{-- Input First Name & Last Name --}}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="first_name" class="mb-1.5 block text-xs font-medium text-gray-400">First Name</label>
+                            <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
+                                data-field-wrapper>
+                                <i class="far fa-user text-gray-400"></i>
+                                <input type="text" id="first_name" name="first_name" required minlength="2"
+                                    placeholder="Nama Depan"
+                                    class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+                                    data-validate="first_name"
+                                    value="{{ old('first_name') }}">
+                            </div>
+                            <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
+                        </div>
+                        <div>
+                            <label for="last_name" class="mb-1.5 block text-xs font-medium text-gray-400">Last Name</label>
+                            <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
+                                data-field-wrapper>
+                                <i class="far fa-user text-gray-400"></i>
+                                <input type="text" id="last_name" name="last_name" required minlength="2"
+                                    placeholder="Nama Belakang"
+                                    class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+                                    data-validate="last_name"
+                                    value="{{ old('last_name') }}">
+                            </div>
+                            <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
+                        </div>
+                    </div>
+
+                    {{-- Input Institution --}}
+                    <div>
+                        <label for="institution" class="mb-1.5 block text-xs font-medium text-gray-400">Institution</label>
+                        <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
+                            data-field-wrapper>
+                            <i class="far fa-building text-gray-400"></i>
+                            <input type="text" id="institution" name="institution"
+                                placeholder="Nama Institusi / Universitas"
+                                class="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+                                value="{{ old('institution') }}">
+                        </div>
                     </div>
 
                     {{-- Input Email --}}
@@ -78,21 +121,7 @@
                         <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
                     </div>
 
-                    {{-- Input Role --}}
-                    <div>
-                        <label for="role" class="mb-1.5 block text-xs font-medium text-gray-400">Role</label>
-                        <div class="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 transition-colors focus-within:border-navy-600"
-                            data-field-wrapper>
-                            <i class="fas fa-users text-gray-400"></i>
-                            <select id="role" name="role" required data-validate="role"
-                                class="w-full bg-transparent text-sm outline-none text-gray-700">
-                                <option value="" disabled selected>Pilih role</option>
-                                <option value="student">Student</option>
-                                <option value="mentor">Mentor</option>
-                            </select>
-                        </div>
-                        <p class="mt-1 hidden text-xs text-red-500" data-field-error></p>
-                    </div>
+
 
                     {{-- Input Password --}}
                     <div>

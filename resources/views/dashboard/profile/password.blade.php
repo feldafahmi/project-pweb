@@ -16,7 +16,14 @@
             <p class="mt-1 text-sm text-slate-500">Pastikan password baru kuat dan tidak digunakan di akun lain.</p>
         </div>
 
-        <form method="POST" action="" class="space-y-5">
+        @if (session('success'))
+            <div class="mb-5 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700 flex items-center gap-2">
+                <i class="fas fa-circle-check text-green-600"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('dashboard.profile.password.update') }}" class="space-y-5">
             @csrf
 
             @foreach ($passwordFields as $field)
@@ -24,7 +31,7 @@
                     <label for="{{ $field['name'] }}" class="mb-1.5 block text-xs font-semibold text-slate-500">
                         {{ $field['label'] }}
                     </label>
-                    <div class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 transition-colors focus-within:border-navy-600">
+                    <div class="flex items-center gap-3 rounded-xl border @error($field['name']) border-red-300 bg-red-50/10 focus-within:border-red-500 @else border-slate-200 focus-within:border-navy-600 @enderror px-4 py-3 transition-colors">
                         <i class="fas fa-lock text-slate-400"></i>
                         <input type="password" id="{{ $field['name'] }}" name="{{ $field['name'] }}"
                             placeholder="{{ $field['placeholder'] }}" required
@@ -34,6 +41,12 @@
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
+                    @error($field['name'])
+                        <p class="mt-1 text-xs font-semibold text-red-500 flex items-center gap-1.5">
+                            <i class="fas fa-circle-exmark"></i>
+                            <span>{{ $message }}</span>
+                        </p>
+                    @enderror
                 </div>
             @endforeach
 
@@ -46,4 +59,23 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-toggle-password]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const input = btn.parentElement.querySelector('input');
+                    if (!input) return;
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                    
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-eye', !isPassword);
+                        icon.classList.toggle('fa-eye-slash', isPassword);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
