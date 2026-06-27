@@ -20,7 +20,7 @@ class ProductReviewController extends Controller
     public function index(Product $product)
     {
         $reviews = $product->reviews()
-            ->with('user:id,name')
+            ->with('user:id,first_name,last_name')
             ->latest()
             ->paginate(10);
 
@@ -68,7 +68,7 @@ class ProductReviewController extends Controller
             'text'       => $validated['comment'],
         ]);
 
-        $review->load('user:id,name');
+        $review->load('user:id,first_name,last_name');
 
         return response()->json(['data' => new ProductReviewResource($review)], 201);
     }
@@ -92,7 +92,7 @@ class ProductReviewController extends Controller
             'text'  => $validated['comment'] ?? $review->text,
         ]);
 
-        $review->load('user:id,name');
+        $review->load('user:id,first_name,last_name');
 
         return response()->json(['data' => new ProductReviewResource($review)]);
     }

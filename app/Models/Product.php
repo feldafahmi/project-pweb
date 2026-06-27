@@ -71,6 +71,6 @@ class Product extends Model
 
     public function reviews()
     {
-        return $this->hasMany(ProductReview::class)->with('user:id,name')->latest();
+        return $this->hasMany(ProductReview::class)->with('user:id,first_name,last_name')->latest();
     }
 }

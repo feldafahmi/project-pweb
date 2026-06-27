@@ -38,7 +38,7 @@ class ReviewController extends Controller
         })->values();
 
         $reviews = Review::where('product_id', $product->id)
-            ->with('user:id,name')
+            ->with('user:id,first_name,last_name')
             ->latest()
             ->paginate($perPage);
 
@@ -77,7 +77,7 @@ class ReviewController extends Controller
 
         $this->recomputeProductRating($product->id);
 
-        $review->load('user:id,name');
+        $review->load('user:id,first_name,last_name');
 
         return response()->json(['data' => new ReviewResource($review)], 201);
     }
