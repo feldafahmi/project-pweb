@@ -18,6 +18,15 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Pada instalasi baru, create_users_table sudah membuat skema final
+        // (username unique + first_name/last_name/institution). Migrasi ini
+        // hanya relevan untuk DB LAMA yang masih punya kolom `name` tunggal —
+        // tanpa guard ini, ia akan mencoba menambah unique('username') yang
+        // sudah ada → error "Duplicate key name 'users_username_unique'".
+        if (! Schema::hasColumn('users', 'name')) {
+            return;
+        }
+
         Schema::table('users', function (Blueprint $table) {
             if (! Schema::hasColumn('users', 'username')) {
                 $table->string('username')->nullable()->after('id');
