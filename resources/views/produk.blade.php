@@ -64,6 +64,12 @@
             </div>
             @endforeach
         </div>
+
+        @if ($products->hasPages())
+            <div class="mt-10">
+                {{ $products->links() }}
+            </div>
+        @endif
     </div>
 
     {{-- MODAL PRODUK --}}

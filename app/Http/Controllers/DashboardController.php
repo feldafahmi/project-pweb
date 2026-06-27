@@ -17,24 +17,10 @@ class DashboardController extends Controller
         // Retrieve products bought by the user
         $purchasedProducts = $user->products()->get();
 
-        // Retrieve milestones from database
+        // Retrieve milestones from database. Milestone bawaan di-seed saat
+        // registrasi (lihat User::seedDefaultMilestones), bukan di sini, agar
+        // request GET tidak melakukan operasi tulis.
         $milestones = $user->milestones()->orderBy('created_at', 'asc')->get();
-
-        // Auto-seed default milestones if database is empty
-        if ($milestones->isEmpty()) {
-            $defaultMilestones = [
-                ['text' => 'Membentuk Kelompok & Cari Nama Tim', 'completed' => true],
-                ['text' => 'Analisis Kasus dengan Framework SWOT/BCG', 'completed' => false],
-                ['text' => 'Asistensi Pitch Deck Bersama Mentor Mark-Up', 'completed' => false],
-            ];
-
-            foreach ($defaultMilestones as $dm) {
-                $user->milestones()->create($dm);
-            }
-
-            // Reload milestones
-            $milestones = $user->milestones()->orderBy('created_at', 'asc')->get();
-        }
 
         // Calculate statistics
         $totalProducts = $purchasedProducts->count();
@@ -49,5 +35,19 @@ class DashboardController extends Controller
         ];
 
         return view('dashboard.index', compact('purchasedProducts', 'milestones', 'stats'));
+    }
+
+    /**
+     * Riwayat transaksi user (header + item), terbaru di atas.
+     */
+    public function transactions()
+    {
+        $transactions = auth()->user()
+            ->transactions()
+            ->with('items')
+            ->latest()
+            ->paginate(10);
+
+        return view('dashboard.transactions', compact('transactions'));
     }
 }

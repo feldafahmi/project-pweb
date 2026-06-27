@@ -19,6 +19,8 @@
 /public/uploads
 /storage/*.key
 /storage/pail
+# Dump DB lokal berisi data pribadi (email + hash password) — jangan di-commit.
+/database/markup_db.sql
 /vendor
 Homestead.json
 Homestead.yaml

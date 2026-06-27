@@ -133,19 +133,23 @@
             document.getElementById('calc-total').innerText = formatRupiah(totalFinal);
         }
 
-        // Fungsi Pengaplikasian Voucher Diskon
+        let voucherCode = ''; // kode yang dipasang user (divalidasi ulang di server)
+
+        // Estimasi tampilan voucher. Diskon SEBENARNYA dihitung server saat bayar.
         function applyVoucher() {
             const inputCode = document.getElementById('voucher-code').value.toUpperCase().trim();
             const messageBox = document.getElementById('voucher-message');
 
             messageBox.classList.remove('hidden', 'text-green-600', 'text-red-500');
 
-            if (AVAILABLE_VOCUHRES = AVAILABLE_VOUCHERS[inputCode] !== undefined) {
+            if (AVAILABLE_VOUCHERS[inputCode] !== undefined) {
                 discountPercent = AVAILABLE_VOUCHERS[inputCode];
+                voucherCode = inputCode;
                 messageBox.innerText = `Berhasil! Voucher dipasang, kamu hemat ${discountPercent * 100}%`;
                 messageBox.classList.add('text-green-600');
             } else {
                 discountPercent = 0;
+                voucherCode = '';
                 messageBox.innerText = `Kode voucher salah atau tidak valid.`;
                 messageBox.classList.add('text-red-500');
             }
@@ -162,6 +166,9 @@
                 return;
             }
 
+            const btn = document.querySelector('button[onclick="processPayment()"]');
+            if (btn) { btn.disabled = true; btn.innerText = 'Memproses...'; }
+
             const productIds = cart.map(item => item.id);
 
             fetch('{{ route('dashboard.checkout.store') }}', {
@@ -170,25 +177,44 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ product_ids: productIds })
+                body: JSON.stringify({ product_ids: productIds, voucher_code: voucherCode })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Simulasi Pembayaran Berhasil! Kelas mentoring akan teraktivasi di dashboard.');
-                    localStorage.removeItem('markup_cart'); // Kosongkan keranjang setelah dibeli
-                    window.location.href = '/dashboard'; // Balik ke halaman utama dashboard
-                } else {
-                    alert('Terjadi kesalahan: ' + (data.message || 'Gagal memproses pembayaran.'));
+            .then(async (response) => ({ ok: response.ok, data: await response.json() }))
+            .then(({ ok, data }) => {
+                if (!ok || !data.success) {
+                    throw new Error(data.message || 'Gagal memproses pembayaran.');
                 }
+                // Buka popup pembayaran Midtrans Snap.
+                snap.pay(data.snap_token, {
+                    onSuccess: () => { afterPaid(); },
+                    onPending: () => { afterPaid(); },
+                    onError: () => { alert('Pembayaran gagal. Silakan coba lagi.'); resetButton(btn); },
+                    onClose: () => {
+                        // User menutup popup tanpa menyelesaikan — transaksi sudah
+                        // dibuat (pending), bisa dilanjutkan dari Riwayat Pembelian.
+                        resetButton(btn);
+                        window.location.href = '{{ route('dashboard.transactions') }}';
+                    }
+                });
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan koneksi.');
+            .catch((err) => {
+                alert('Terjadi kesalahan: ' + err.message);
+                resetButton(btn);
             });
+        }
+
+        function afterPaid() {
+            localStorage.removeItem('markup_cart'); // kosongkan keranjang
+            window.location.href = '{{ route('dashboard.transactions') }}';
+        }
+
+        function resetButton(btn) {
+            if (btn) { btn.disabled = false; btn.innerText = 'Bayar Sekarang'; }
         }
 
         // Eksekusi kalkulator billing kasir pertama kali saat dokumen dimuat
         document.addEventListener('DOMContentLoaded', initCheckout);
     </script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 @endsection

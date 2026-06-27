@@ -16,7 +16,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::orderBy('id', 'asc')->get();
+        $products = Product::orderBy('id', 'asc')->paginate(8)->withQueryString();
         return view('produk', compact('products'));
     }
 
@@ -43,8 +43,7 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image_url'] = 'storage/' . $path;
+            $data['image_url'] = $this->storeImage($request->file('image'), 'products');
         } else {
             $data['image_url'] = 'img/63815.png';
         }
@@ -70,8 +69,7 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image_url'] = 'storage/' . $path;
+            $data['image_url'] = $this->storeImage($request->file('image'), 'products');
         }
 
         $product->update($data);
@@ -85,5 +83,27 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->back()->with('success', 'Produk berhasil dihapus.');
+    }
+
+    /**
+     * Simpan file gambar langsung ke /public/uploads/{dir} dan kembalikan
+     * path relatif (cocok dipakai sebagai image_url via asset()).
+     *
+     * Sengaja menyimpan langsung ke public/ alih-alih disk 'public', supaya
+     * tidak bergantung pada `php artisan storage:link` — symlink sering
+     * dinonaktifkan di shared hosting cPanel. Konsisten dengan UploadController.
+     */
+    private function storeImage(\Illuminate\Http\UploadedFile $file, string $dir): string
+    {
+        $target = public_path('uploads/' . $dir);
+        if (! is_dir($target)) {
+            @mkdir($target, 0755, true);
+        }
+
+        $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $filename = $dir . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        $file->move($target, $filename);
+
+        return 'uploads/' . $dir . '/' . $filename;
     }
 }

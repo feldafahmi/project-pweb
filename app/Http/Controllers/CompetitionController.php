@@ -45,8 +45,7 @@ class CompetitionController extends Controller
         ]);
 
         if ($request->hasFile('poster')) {
-            $path = $request->file('poster')->store('posters', 'public');
-            $data['image_url'] = 'storage/' . $path;
+            $data['image_url'] = $this->storeImage($request->file('poster'), 'posters');
         } else {
             $data['image_url'] = 'img/iyref.jpeg';
         }
@@ -74,8 +73,7 @@ class CompetitionController extends Controller
         ]);
 
         if ($request->hasFile('poster')) {
-            $path = $request->file('poster')->store('posters', 'public');
-            $data['image_url'] = 'storage/' . $path;
+            $data['image_url'] = $this->storeImage($request->file('poster'), 'posters');
         }
 
         $competition->update($data);
@@ -89,5 +87,27 @@ class CompetitionController extends Controller
         $competition->delete();
 
         return redirect()->back()->with('success', 'Info lomba berhasil dihapus.');
+    }
+
+    /**
+     * Simpan file gambar langsung ke /public/uploads/{dir} dan kembalikan
+     * path relatif (cocok dipakai sebagai image_url via asset()).
+     *
+     * Sengaja menyimpan langsung ke public/ alih-alih disk 'public', supaya
+     * tidak bergantung pada `php artisan storage:link` — symlink sering
+     * dinonaktifkan di shared hosting cPanel. Konsisten dengan UploadController.
+     */
+    private function storeImage(\Illuminate\Http\UploadedFile $file, string $dir): string
+    {
+        $target = public_path('uploads/' . $dir);
+        if (! is_dir($target)) {
+            @mkdir($target, 0755, true);
+        }
+
+        $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $filename = $dir . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        $file->move($target, $filename);
+
+        return 'uploads/' . $dir . '/' . $filename;
     }
 }

@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-        Route::view('/transactions', 'dashboard.transactions')->name('transactions');
+        Route::get('/transactions', [DashboardController::class, 'transactions'])->name('transactions');
 
         // Milestone Tracker API
         Route::get('/milestones', [MilestoneController::class, 'index'])->name('milestones.index');

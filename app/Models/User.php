@@ -40,6 +40,29 @@ class User extends Authenticatable
                 $user->username = static::generateUsername($user->email);
             }
         });
+
+        // Setiap user baru mendapat milestone awal sebagai panduan onboarding.
+        // Sebelumnya di-seed di DashboardController::index (tulis pada request GET);
+        // dipindah ke sini agar halaman dashboard murni read-only.
+        static::created(function (self $user) {
+            $user->seedDefaultMilestones();
+        });
+    }
+
+    /**
+     * Buat milestone bawaan untuk user (dipakai saat registrasi).
+     */
+    public function seedDefaultMilestones(): void
+    {
+        $defaults = [
+            ['text' => 'Membentuk Kelompok & Cari Nama Tim', 'completed' => true],
+            ['text' => 'Analisis Kasus dengan Framework SWOT/BCG', 'completed' => false],
+            ['text' => 'Asistensi Pitch Deck Bersama Mentor Mark-Up', 'completed' => false],
+        ];
+
+        foreach ($defaults as $milestone) {
+            $this->milestones()->create($milestone);
+        }
     }
 
     private static function generateUsername(?string $email): string
@@ -95,13 +118,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Produk yang dibeli user (relasi web felda — lihat catatan integrasi).
+     * Produk yang sudah dibeli user (transaksi berstatus 'paid').
+     *
+     * Sumber kebenaran: transaction_items dari transaksi paid milik user —
+     * sama persis dengan gate akses di mobile (endpoint /my-products). Bukan
+     * relasi Eloquent murni (pivot transaction_items tidak menyimpan user_id),
+     * jadi dikembalikan sebagai query Product; pakai dengan ->get()/->count().
      */
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'transactions', 'user_id', 'product_id')
-                    ->wherePivot('status', 'completed')
-                    ->withTimestamps();
+        return Product::query()
+            ->whereIn('id', TransactionItem::query()
+                ->select('product_id')
+                ->whereNotNull('product_id')
+                ->whereHas('transaction', fn ($q) => $q
+                    ->where('user_id', $this->id)
+                    ->where('status', 'paid')))
+            ->distinct();
     }
 
     /**

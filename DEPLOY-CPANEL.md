@@ -98,8 +98,12 @@ tempel ke `.env`. Migrasi dijalankan dengan mengimpor SQL ke phpMyAdmin
 
 ### 6. Set permission folder writable
 ```bash
-chmod -R 775 storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache public/uploads
 ```
+> Gambar yang di-upload admin (produk, lomba, katalog) disimpan **langsung** ke
+> `public/uploads/` — **tidak** memerlukan `php artisan storage:link`, jadi aman
+> di shared host yang menonaktifkan symlink. Pastikan folder `public/uploads`
+> writable (dibuat otomatis saat upload pertama bila parent-nya writable).
 
 ### 7. Verifikasi
 ```

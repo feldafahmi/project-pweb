@@ -40,6 +40,21 @@ class MidtransService
             'name'     => mb_substr($i->product_title ?? 'Item', 0, 50), // Midtrans max 50 char
         ])->values()->all();
 
+        // Midtrans mewajibkan gross_amount == sum(item_details). Bila total
+        // transaksi berbeda dari jumlah harga produk (mis. web menambah biaya
+        // layanan / potongan voucher yang tidak disimpan sebagai item), tambahkan
+        // satu baris penyesuaian agar selalu konsisten. Mobile: diff = 0 → tanpa baris.
+        $sum  = array_sum(array_map(fn ($i) => $i['price'] * $i['quantity'], $items));
+        $diff = (int) $trx->total_amount - $sum;
+        if ($diff !== 0) {
+            $items[] = [
+                'id'       => 'ADJUSTMENT',
+                'price'    => $diff,            // boleh negatif (diskon)
+                'quantity' => 1,
+                'name'     => $diff < 0 ? 'Diskon Voucher' : 'Biaya Layanan',
+            ];
+        }
+
         $params = [
             'transaction_details' => [
                 'order_id'     => $trx->code,            // unik — sekaligus order_id Midtrans
