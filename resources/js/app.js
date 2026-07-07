@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initMobileMenu();
     initProductFilters();
     initAuthForms();
+    initGoogleSignIn();
     initNavbarAuthState();
     initFlashToast();
 });
@@ -202,29 +203,132 @@ function handleAuthSubmit(form, mode) {
         }
         return result;
     })
-    .then(user => {
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-        
-        let flash;
-        let redirect;
-        if (user.role === "admin") {
-            flash = `Selamat datang, ${user.name}! Anda masuk sebagai Admin.`;
-            redirect = "/admin/products";
-        } else if (user.role === "mentor") {
-            flash = `Selamat datang, ${user.name}! Anda masuk sebagai Mentor.`;
-            redirect = "/mentor/products";
-        } else {
-            flash = `Selamat datang kembali, ${user.name}!`;
-            redirect = "/";
-        }
-        sessionStorage.setItem("markup.flash", flash);
-        window.location.href = redirect;
-    })
+    .then(onAuthSuccess)
     .catch(err => {
         console.error("[auth] failed", err);
         setSubmitting(form, false);
         showAlert(form, "error", err.message);
     });
+}
+
+// Simpan sesi (localStorage untuk state navbar), lalu redirect sesuai role.
+// Dipakai bersama oleh login/register password dan Google Sign-In.
+function onAuthSuccess(user) {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+
+    let flash;
+    let redirect;
+    if (user.role === "admin") {
+        flash = `Selamat datang, ${user.name}! Anda masuk sebagai Admin.`;
+        redirect = "/admin/products";
+    } else if (user.role === "mentor") {
+        flash = `Selamat datang, ${user.name}! Anda masuk sebagai Mentor.`;
+        redirect = "/mentor/products";
+    } else {
+        flash = `Selamat datang kembali, ${user.name}!`;
+        redirect = "/";
+    }
+    sessionStorage.setItem("markup.flash", flash);
+    window.location.href = redirect;
+}
+
+/* ========== Google Sign-In (GIS) ========== */
+// Tombol "Continue with Google" (data-google-signin) meneruskan klik ke tombol
+// asli Google Identity Services yang di-render tersembunyi (data-google-btn).
+// Google mengembalikan ID token → dikirim ke /auth/google untuk login session.
+function initGoogleSignIn() {
+    const trigger = document.querySelector("[data-google-signin]");
+    const holder = document.querySelector("[data-google-btn]");
+    if (!trigger || !holder) return;
+
+    const form = document.querySelector("[data-auth-form]");
+    const clientId = document
+        .querySelector('meta[name="google-client-id"]')
+        ?.getAttribute("content");
+
+    if (!clientId) {
+        trigger.disabled = true;
+        trigger.title = "Google Sign-In belum dikonfigurasi di server";
+        return;
+    }
+
+    let ready = false;
+    function ensureSetup() {
+        if (ready) return true;
+        if (!window.google?.accounts?.id) return false;
+
+        window.google.accounts.id.initialize({
+            client_id: clientId,
+            ux_mode: "popup",
+            callback: (res) => {
+                if (res?.credential) submitGoogleToken(form, res.credential);
+            },
+        });
+        // Render tombol GIS asli (tersembunyi) supaya bisa di-klik programatik.
+        window.google.accounts.id.renderButton(holder, {
+            type: "standard",
+            theme: "outline",
+            size: "large",
+        });
+        ready = true;
+        return true;
+    }
+
+    // GIS dimuat async, jadi poll singkat sampai objek tersedia lalu setup.
+    (function waitForGis(attempt = 0) {
+        if (ensureSetup() || attempt > 40) return;
+        setTimeout(() => waitForGis(attempt + 1), 150);
+    })();
+
+    trigger.addEventListener("click", () => {
+        if (!ensureSetup()) {
+            showAlert(form, "error", "Google Sign-In masih memuat, coba lagi sebentar.");
+            return;
+        }
+        const realBtn = holder.querySelector('div[role="button"], button');
+        if (realBtn) {
+            realBtn.click();
+        } else {
+            showAlert(form, "error", "Tidak dapat membuka Google Sign-In. Muat ulang halaman.");
+        }
+    });
+}
+
+function submitGoogleToken(form, idToken) {
+    if (form) {
+        setSubmitting(form, true);
+        showAlert(form, null);
+    }
+
+    const csrf = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
+
+    fetch("/auth/google", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRF-TOKEN": csrf,
+            "Accept": "application/json",
+        },
+        body: JSON.stringify({ id_token: idToken }),
+    })
+        .then(async (response) => {
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.message || "Login Google gagal.");
+            }
+            return result;
+        })
+        .then(onAuthSuccess)
+        .catch((err) => {
+            console.error("[auth] google failed", err);
+            if (form) {
+                setSubmitting(form, false);
+                showAlert(form, "error", err.message);
+            }
+        });
 }
 
 function setSubmitting(form, isSubmitting) {

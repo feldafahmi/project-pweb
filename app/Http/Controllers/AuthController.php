@@ -78,16 +78,37 @@ class AuthController extends Controller
             'id_token' => 'required|string',
         ]);
 
+        $user = $this->resolveGoogleUser($data['id_token']);
+
+        $user->tokens()->delete();
+        $token = $user->createToken('mobile_token')->plainTextToken;
+
+        return response()->json([
+            'message'      => 'Login Google Berhasil',
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
+            'user'         => $user,
+        ]);
+    }
+
+    /**
+     * Verifikasi ID token Google lalu find-or-create user.
+     * Dipakai bersama oleh jalur API (mobile) dan web (session).
+     *
+     * Strategi pencocokan: 1) google_id; 2) tautkan akun email lama; 3) buat baru.
+     */
+    private function resolveGoogleUser(string $idToken): User
+    {
         $clientId = config('services.google.client_id');
         if (empty($clientId)) {
-            return response()->json([
-                'message' => 'Google Sign-In belum dikonfigurasi di server',
-            ], 500);
+            throw ValidationException::withMessages([
+                'id_token' => ['Google Sign-In belum dikonfigurasi di server'],
+            ]);
         }
 
         $client = new \Google\Client(['client_id' => $clientId]);
         try {
-            $payload = $client->verifyIdToken($data['id_token']);
+            $payload = $client->verifyIdToken($idToken);
         } catch (\Throwable $e) {
             $payload = false;
         }
@@ -109,7 +130,6 @@ class AuthController extends Controller
             ]);
         }
 
-        // 1) cocokkan via google_id; 2) tautkan akun email lama; 3) buat baru.
         $user = User::where('google_id', $googleId)->first();
 
         if (! $user) {
@@ -131,15 +151,7 @@ class AuthController extends Controller
             }
         }
 
-        $user->tokens()->delete();
-        $token = $user->createToken('mobile_token')->plainTextToken;
-
-        return response()->json([
-            'message'      => 'Login Google Berhasil',
-            'access_token' => $token,
-            'token_type'   => 'Bearer',
-            'user'         => $user,
-        ]);
+        return $user;
     }
 
     // LOGOUT (API) — hapus token yang dipakai untuk request ini
@@ -210,6 +222,27 @@ class AuthController extends Controller
             'email'   => $user->email,
             'role'    => $user->role,
         ], 201);
+    }
+
+    // GOOGLE SIGN-IN (WEB) — verifikasi ID token dari Google Identity Services
+    // di browser, lalu login berbasis session (bukan token seperti mobile).
+    public function webGoogle(Request $request)
+    {
+        $data = $request->validate([
+            'id_token' => 'required|string',
+        ]);
+
+        $user = $this->resolveGoogleUser($data['id_token']);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return response()->json([
+            'message' => 'Login Google Berhasil',
+            'name'    => $user->name,
+            'email'   => $user->email,
+            'role'    => $user->role,
+        ], 200);
     }
 
     public function webLogout(Request $request)

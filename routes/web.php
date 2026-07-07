@@ -30,6 +30,7 @@ Route::middleware('guest')->group(function () {
     
     Route::post('/login', [AuthController::class, 'webLogin'])->name('login.post');
     Route::post('/register', [AuthController::class, 'webRegister'])->name('register.post');
+    Route::post('/auth/google', [AuthController::class, 'webGoogle'])->name('auth.google');
 });
 
 // Protected Session Auth Routes
