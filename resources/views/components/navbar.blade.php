@@ -48,6 +48,14 @@
         </ul>
 
         <div class="flex flex-1 items-center justify-end gap-3">
+            {{-- Keranjang — hanya tampil saat sudah login (dikontrol via JS) --}}
+            <a href="{{ route('dashboard.cart') }}" data-nav-cart aria-label="Keranjang"
+                class="relative hidden h-10 w-10 items-center justify-center rounded-lg text-navy-600 transition hover:bg-slate-50">
+                <i class="fas fa-cart-shopping text-lg"></i>
+                <span data-cart-count
+                    class="absolute -right-0.5 -top-0.5 hidden h-5 min-w-5 items-center justify-center rounded-full bg-[#A855F7] px-1 text-[10px] font-bold leading-none text-white">0</span>
+            </a>
+
             <div class="hidden items-center gap-3 sm:flex" data-nav-auth>
                 <a href="{{ route('login') }}" class="btn-outline">Masuk</a>
                 <a href="{{ route('register') }}" class="btn-primary">Daftar</a>

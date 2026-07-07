@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initAuthForms();
     initGoogleSignIn();
     initNavbarAuthState();
+    initNavbarCart();
     initFlashToast();
 });
 
@@ -211,6 +212,15 @@ function handleAuthSubmit(form, mode) {
     });
 }
 
+// Ambil ?redirect= dari URL saat ini bila berupa path relatif same-origin yang
+// aman (diawali "/" tapi bukan "//"). Mengembalikan null jika tidak ada/berbahaya.
+function safeRedirectParam() {
+    const raw = new URLSearchParams(window.location.search).get("redirect");
+    if (!raw) return null;
+    if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+    return raw;
+}
+
 // Simpan sesi (localStorage untuk state navbar), lalu redirect sesuai role.
 // Dipakai bersama oleh login/register password dan Google Sign-In.
 function onAuthSuccess(user) {
@@ -226,7 +236,9 @@ function onAuthSuccess(user) {
         redirect = "/mentor/products";
     } else {
         flash = `Selamat datang kembali, ${user.name}!`;
-        redirect = "/";
+        // Hormati ?redirect= (mis. dari tombol "tambah ke keranjang" di /produk).
+        // Hanya path relatif same-origin yang diizinkan — cegah open redirect.
+        redirect = safeRedirectParam() || "/";
     }
     sessionStorage.setItem("markup.flash", flash);
     window.location.href = redirect;
@@ -421,6 +433,47 @@ function initNavbarAuthState() {
     } catch (e) {
         localStorage.removeItem(AUTH_STORAGE_KEY);
     }
+}
+
+/* ========== Keranjang di navbar ========== */
+// Ikon keranjang hanya relevan untuk user yang sudah login. Badge menampilkan
+// jumlah item dari localStorage "markup_cart" (sumber yang sama dg halaman
+// produk & keranjang). Diekspos global agar bisa dipanggil setelah add-to-cart
+// tanpa reload halaman.
+function initNavbarCart() {
+    const cartEl = document.querySelector("[data-nav-cart]");
+    if (!cartEl) return;
+
+    window.markupUpdateCartBadge = updateCartBadge;
+
+    const isLoggedIn = !!localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!isLoggedIn) return; // biarkan tersembunyi untuk guest
+
+    cartEl.classList.remove("hidden");
+    cartEl.classList.add("inline-flex");
+    updateCartBadge();
+
+    // Sinkron bila keranjang berubah di tab lain.
+    window.addEventListener("storage", (e) => {
+        if (e.key === "markup_cart") updateCartBadge();
+    });
+}
+
+function updateCartBadge() {
+    const badge = document.querySelector("[data-cart-count]");
+    if (!badge) return;
+
+    let count = 0;
+    try {
+        const cart = JSON.parse(localStorage.getItem("markup_cart"));
+        count = Array.isArray(cart) ? cart.length : 0;
+    } catch {
+        count = 0;
+    }
+
+    badge.textContent = count > 99 ? "99+" : String(count);
+    badge.classList.toggle("hidden", count === 0);
+    badge.classList.toggle("flex", count > 0);
 }
 
 function initFlashToast() {

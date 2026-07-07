@@ -70,8 +70,13 @@
                 @endforeach
             </nav>
 
-            {{-- Logout --}}
-            <div class="border-t border-slate-100 px-5 py-4">
+            {{-- Kembali ke beranda & Logout --}}
+            <div class="space-y-1 border-t border-slate-100 px-5 py-4">
+                <a href="{{ url('/') }}"
+                    class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-navy-600 transition-colors hover:bg-slate-100">
+                    <i class="fas fa-arrow-left w-5 text-center"></i>
+                    <span>Kembali ke Beranda</span>
+                </a>
                 <button type="button" data-dashboard-logout
                     class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50">
                     <i class="fas fa-sign-out-alt w-5 text-center"></i>

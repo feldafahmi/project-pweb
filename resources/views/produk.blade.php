@@ -26,22 +26,65 @@
             <span class="text-slate-400">Produk</span>
         </div>
 
+        {{-- SEARCH BAR --}}
+        <form method="GET" action="{{ route('produk') }}" class="mx-auto mb-8 max-w-xl">
+            @if($activeType !== 'semua')
+                <input type="hidden" name="type" value="{{ $activeType }}">
+            @endif
+            <div class="relative">
+                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" name="search" value="{{ $searchTerm }}"
+                    placeholder="Cari produk..."
+                    class="w-full rounded-full border border-slate-200 bg-white py-3 pl-11 pr-28 text-sm text-slate-700 shadow-sm outline-none transition focus:border-[#A855F7] focus:ring-2 focus:ring-purple-100">
+                <button type="submit"
+                    class="absolute inset-y-1.5 right-1.5 rounded-full bg-[#A855F7] px-5 text-sm font-bold text-white transition hover:bg-purple-600">
+                    Cari
+                </button>
+            </div>
+        </form>
+
+        {{-- FILTER KATEGORI --}}
+        @php
+            $filters = [
+                'semua'    => 'Semua',
+                'kelas'    => 'Kelas',
+                'bootcamp' => 'Live Bootcamp',
+                'modul'    => 'Modul',
+            ];
+        @endphp
         <div class="mb-10 flex flex-wrap justify-center gap-3">
-            <button
-                class="rounded-full bg-[#A855F7] px-6 py-2 text-sm font-bold text-white transition hover:bg-purple-600">Semua</button>
-            <button
-                class="rounded-full bg-slate-100 px-6 py-2 text-sm font-bold text-[#1A2B56] transition hover:bg-slate-200">Kelas</button>
-            <button
-                class="rounded-full bg-slate-100 px-6 py-2 text-sm font-bold text-[#1A2B56] transition hover:bg-slate-200">Live
-                Bootcamp</button>
-            <button
-                class="rounded-full bg-slate-100 px-6 py-2 text-sm font-bold text-[#1A2B56] transition hover:bg-slate-200">Modul</button>
+            @foreach($filters as $value => $label)
+                @php
+                    $params = $value === 'semua' ? [] : ['type' => $value];
+                    if ($searchTerm !== '') {
+                        $params['search'] = $searchTerm;
+                    }
+                    $isActive = $activeType === $value;
+                @endphp
+                <a href="{{ route('produk', $params) }}"
+                    class="rounded-full px-6 py-2 text-sm font-bold transition {{ $isActive ? 'bg-[#A855F7] text-white hover:bg-purple-600' : 'bg-slate-100 text-[#1A2B56] hover:bg-slate-200' }}">
+                    {{ $label }}
+                </a>
+            @endforeach
         </div>
+
+        @if($products->isEmpty())
+            <div class="rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
+                <div class="mb-3 text-4xl text-slate-300"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <p class="text-lg font-bold text-[#1A2B56]">Produk tidak ditemukan</p>
+                <p class="mt-1 text-sm text-slate-500">
+                    Coba kata kunci lain atau
+                    <a href="{{ route('produk') }}" class="font-semibold text-[#A855F7] hover:underline">tampilkan semua produk</a>.
+                </p>
+            </div>
+        @endif
 
         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
             @foreach($products as $product)
             {{-- CARD --}}
-            <div onclick="openModal({{ $product->id }}, '{{ str_replace(["\r", "\n", "'", '"'], ["", "", "\'", '\"'], e($product->title)) }}', '{{ str_replace(["\r", "\n", "'", '"'], ["", "", "\'", '\"'], e($product->description)) }}', '{{ number_format($product->original_price ?? $product->price * 1.5, 0, ',', '.') }}', '{{ number_format($product->price, 0, ',', '.') }}', '{{ asset($product->image_url ?? 'img/63815.png') }}')"
+            <a href="{{ route('produk.show', $product->id) }}"
                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                 <div class="h-56 w-full overflow-hidden bg-slate-200">
                     <img src="{{ asset($product->image_url ?? 'img/63815.png') }}" alt="{{ $product->title }}"
@@ -61,7 +104,7 @@
                         <span class="block text-xl font-extrabold text-[#A855F7]">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                     </div>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
 
@@ -71,133 +114,4 @@
             </div>
         @endif
     </div>
-
-    {{-- MODAL PRODUK --}}
-    <div id="productModal"
-        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity duration-300">
-        <div class="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl md:flex-row">
-
-            <button onclick="closeModal()"
-                class="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="h-64 w-full bg-slate-200 md:h-auto md:w-1/2">
-                <img id="modalProdImage" src="" alt="Detail Produk" class="h-full w-full object-cover">
-            </div>
-
-            <div class="flex w-full flex-col justify-between p-6 md:w-1/2 md:p-8">
-                <div>
-                    <h2 id="modalProdTitle" class="mb-4 text-2xl font-bold text-[#1A2B56]">Judul</h2>
-
-                    <div class="mb-5">
-                        <div class="mb-2 flex items-center gap-2">
-                            <div class="h-5 w-1 rounded-full bg-yellow-400"></div>
-                            <h3 class="font-semibold text-slate-800">Deskripsi Bundling</h3>
-                        </div>
-                        <p id="modalProdDesc" class="text-sm leading-relaxed text-slate-600">
-                            Deskripsi
-                        </p>
-                    </div>
-
-                    <div class="mb-6">
-                        <div class="mb-3 flex items-center gap-2">
-                            <div class="h-5 w-1 rounded-full bg-yellow-400"></div>
-                            <h3 class="font-semibold text-slate-800">Produk Dalam Bundling</h3>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <span
-                                class="flex items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
-                                <span
-                                    class="flex h-5 w-5 items-center justify-center rounded-full bg-yellow-300 text-xs font-bold text-yellow-900">1</span>
-                                Akses Materi Inti
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 border-t border-purple-100 pt-5">
-                    <div class="mb-4">
-                        <p id="modalOldPrice" class="text-sm text-slate-400 line-through">0</p>
-                        <p id="modalNewPrice" class="text-3xl font-extrabold text-[#A855F7]">0</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="addToCart()"
-                            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-[#A855F7] text-[#A855F7] transition hover:bg-purple-50">
-                            <i class="fa-solid fa-cart-shopping text-xl"></i>
-                        </button>
-                        <button onclick="addToCart()"
-                            class="flex h-12 w-full items-center justify-center rounded-xl bg-[#A855F7] text-lg font-bold italic text-white shadow-lg shadow-purple-200 transition hover:bg-purple-600">
-                            Beli Bundling Ini
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
-
-@push('scripts')
-    <script>
-        const modal = document.getElementById('productModal');
-
-        // Variabel global sementara untuk menyimpan data produk yang SEDANG DIBUKA di modal
-        let currentProduct = {};
-
-        // 1. UPDATE FUNGSI BUKA MODAL AGAR DINAMIS
-        function openModal(id, title, desc, oldPrice, newPrice, imageSrc) {
-            // Ubah teks & gambar di dalam modal
-            document.getElementById('modalProdTitle').innerText = title;
-            document.getElementById('modalProdDesc').innerText = desc;
-            document.getElementById('modalOldPrice').innerText = oldPrice;
-            document.getElementById('modalNewPrice').innerText = newPrice;
-            document.getElementById('modalProdImage').src = imageSrc;
-
-            // Bersihkan format harga dari string "99.000" menjadi angka 99000 untuk kalkulasi keranjang
-            let numericPrice = parseInt(newPrice.replace(/\./g, ''));
-
-            // Simpan data ke variabel global agar bisa diambil oleh tombol Add to Cart
-            currentProduct = {
-                id: id,
-                title: title,
-                price: numericPrice,
-                image: imageSrc
-            };
-
-            // Munculkan Modal
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
-        }
-
-        // 2. UPDATE FUNGSI ADD TO CART
-        function addToCart() {
-            let cart = JSON.parse(localStorage.getItem('markup_cart')) || [];
-
-            // Cek berdasarkan ID dinamis yang disimpan di currentProduct
-            const isExist = cart.find(item => item.id === currentProduct.id);
-
-            if (!isExist) {
-                // Masukkan data produk yang sedang dibuka ke keranjang
-                cart.push(currentProduct);
-                localStorage.setItem('markup_cart', JSON.stringify(cart));
-                alert("Berhasil ditambahkan ke keranjang!");
-                closeModal(); // Opsional: Langsung tutup modal setelah sukses
-            } else {
-                alert("Produk ini sudah ada di keranjang kamu.");
-            }
-        }
-
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-    </script>
-@endpush

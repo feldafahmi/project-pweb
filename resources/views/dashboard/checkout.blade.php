@@ -83,6 +83,10 @@
         let discountPercent = 0;
         let subtotal = 0;
 
+        // ID produk yang sudah dimiliki user (transaksi paid). Item ini dibuang
+        // dari keranjang agar tidak ikut ditagih (server juga menolaknya).
+        const OWNED_IDS = @json($ownedIds);
+
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -92,8 +96,17 @@
         }
 
         function initCheckout() {
-            const cart = JSON.parse(localStorage.getItem('markup_cart')) || [];
+            let cart = JSON.parse(localStorage.getItem('markup_cart')) || [];
             const container = document.getElementById('checkout-items-list');
+
+            // Buang produk yang sudah dibeli (mis. dibayar dari transaksi lain)
+            // agar tampilan & subtotal konsisten dengan yang benar-benar ditagih.
+            const cleaned = cart.filter(item => !OWNED_IDS.includes(item.id));
+            if (cleaned.length !== cart.length) {
+                cart = cleaned;
+                localStorage.setItem('markup_cart', JSON.stringify(cart));
+                window.markupUpdateCartBadge?.();
+            }
 
             if (cart.length === 0) {
                 alert('Keranjang belanja kosong! Kamu akan dialihkan ke halaman produk.');
@@ -184,10 +197,11 @@
                 if (!ok || !data.success) {
                     throw new Error(data.message || 'Gagal memproses pembayaran.');
                 }
+                const trxId = data.transaction_id;
                 // Buka popup pembayaran Midtrans Snap.
                 snap.pay(data.snap_token, {
-                    onSuccess: () => { afterPaid(); },
-                    onPending: () => { afterPaid(); },
+                    onSuccess: () => { afterPaid(trxId); },
+                    onPending: () => { afterPaid(trxId); },
                     onError: () => { alert('Pembayaran gagal. Silakan coba lagi.'); resetButton(btn); },
                     onClose: () => {
                         // User menutup popup tanpa menyelesaikan — transaksi sudah
@@ -203,8 +217,26 @@
             });
         }
 
-        function afterPaid() {
+        async function afterPaid(trxId) {
             localStorage.removeItem('markup_cart'); // kosongkan keranjang
+
+            // Webhook Midtrans tidak bisa menjangkau localhost, jadi tarik status
+            // langsung dari server (yang memanggil Status API Midtrans) agar
+            // dashboard langsung ter-update jadi "Lunas".
+            if (trxId) {
+                try {
+                    await fetch(`/dashboard/transactions/${trxId}/sync`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+                } catch (e) {
+                    /* diabaikan — user tetap diarahkan; bisa "Cek Status" manual */
+                }
+            }
+
             window.location.href = '{{ route('dashboard.transactions') }}';
         }
 

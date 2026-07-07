@@ -73,7 +73,7 @@
                 @else
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($purchasedProducts as $product)
-                            <div onclick="openProductModal('{{ e(str_replace(["\r", "\n", "'", '"'], ['', '', "\'", '\"'], $product->title)) }}', '{{ e(str_replace(["\r", "\n", "'", '"'], [' ', ' ', "\'", '\"'], $product->description)) }}', '{{ e($product->video_url) }}', '{{ e($product->whatsapp_link) }}', '{{ e(asset($product->image_url ?? 'img/63815.png')) }}')"
+                            <a href="{{ route('dashboard.learn', $product->id) }}"
                                 class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-150 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
                                 <div class="h-40 w-full overflow-hidden bg-slate-200 relative">
                                     <img src="{{ asset($product->image_url ?? 'img/63815.png') }}"
@@ -97,7 +97,7 @@
                                         <i class="fa-solid fa-arrow-right-to-bracket"></i>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                 @endif
@@ -105,139 +105,4 @@
         </div>
 
     </div>
-
-    {{-- MODAL POP-UP DETAIL PRODUK EKSKLUSIF --}}
-    <div id="productDetailModal"
-        class="fixed inset-0 z-[999] hidden items-center justify-center bg-black/70 p-4 backdrop-blur-md transition-all">
-        <div
-            class="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl md:flex-row animate-in fade-in zoom-in duration-300">
-
-            {{-- Close Button --}}
-            <button onclick="closeProductModal()"
-                class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-800 shadow-md hover:bg-red-500 hover:text-white transition">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            {{-- Modal Left (Video / Image player) --}}
-            <div class="w-full bg-slate-900 md:w-5/12 flex items-center justify-center min-h-[250px] md:min-h-0">
-                <div id="modalVideoContainer" class="w-full h-full flex items-center justify-center p-4">
-                </div>
-            </div>
-
-            {{-- Modal Right (Content) --}}
-            <div class="flex w-full flex-col p-8 md:w-7/12 justify-between">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-widest text-[#A855F7] mb-2 block">Akses Pembelajaran
-                        Premium</span>
-                    <h2 id="modalProductTitle" class="mb-3 text-2xl font-black text-navy-600 leading-tight">Nama Produk</h2>
-
-                    <div class="mb-6">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Deskripsi Materi</h4>
-                        <p id="modalProductDesc" class="text-sm leading-relaxed text-slate-600">
-                            Deskripsi mengenai produk bimbingan akan ditampilkan secara dinamis di sini.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-6 border-t border-slate-100">
-                    <div id="whatsappContainer">
-                        <a id="modalWhatsappLink" href="#" target="_blank"
-                            class="flex h-12 w-full items-center justify-center rounded-xl bg-green-500 text-sm font-bold text-white shadow-md transition hover:bg-green-600 hover:scale-[1.02] active:scale-95">
-                            <i class="fa-brands fa-whatsapp mr-2 text-lg"></i> Gabung Grup WhatsApp Diskusi
-                        </a>
-                    </div>
-                    <button onclick="closeProductModal()"
-                        class="w-full h-12 rounded-xl border border-slate-200 text-sm font-bold text-slate-500 hover:bg-slate-50 transition">
-                        Tutup Halaman
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
-
-@push('scripts')
-    <script>
-        // LOGIKA DYNAMIC POP-UP DETAIL PRODUK
-        function getYoutubeEmbedUrl(url) {
-            if (!url) return '';
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            if (match && match[2].length === 11) {
-                return 'https://www.youtube.com/embed/' + match[2];
-            }
-            return url;
-        }
-
-        function openProductModal(title, desc, videoUrl, whatsappLink, imageSrc) {
-            const productModal = document.getElementById('productDetailModal');
-            if (!productModal) return;
-
-            const titleEl = document.getElementById('modalProductTitle');
-            if (titleEl) titleEl.innerText = title;
-
-            const descEl = document.getElementById('modalProductDesc');
-            if (descEl) descEl.innerText = desc;
-
-            const videoContainer = document.getElementById('modalVideoContainer');
-            if (videoContainer) {
-                const embedUrl = getYoutubeEmbedUrl(videoUrl);
-                if (embedUrl) {
-                    videoContainer.innerHTML = `
-                        <iframe class="w-full aspect-video rounded-xl shadow-lg border-0" 
-                            src="${embedUrl}" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                        </iframe>`;
-                } else {
-                    videoContainer.innerHTML = `
-                        <div class="flex flex-col items-center justify-center text-center p-6 text-slate-400">
-                            <img src="${imageSrc}" class="max-h-48 w-full object-cover rounded-xl mb-4 opacity-80">
-                            <i class="fa-solid fa-video-slash text-2xl mb-2"></i>
-                            <p class="text-xs">Materi video bimbingan belum diunggah oleh mentor.</p>
-                        </div>`;
-                }
-            }
-
-            const whatsappContainer = document.getElementById('whatsappContainer');
-            const whatsappBtn = document.getElementById('modalWhatsappLink');
-            if (whatsappContainer && whatsappBtn) {
-                if (whatsappLink) {
-                    whatsappBtn.href = whatsappLink;
-                    whatsappContainer.classList.remove('hidden');
-                } else {
-                    whatsappContainer.classList.add('hidden');
-                }
-            }
-
-            productModal.classList.remove('hidden');
-            productModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeProductModal() {
-            const productModal = document.getElementById('productDetailModal');
-            if (!productModal) return;
-
-            const videoContainer = document.getElementById('modalVideoContainer');
-            if (videoContainer) {
-                videoContainer.innerHTML = '';
-            }
-            productModal.classList.add('hidden');
-            productModal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const productModal = document.getElementById('productDetailModal');
-            if (productModal) {
-                productModal.addEventListener('click', function(e) {
-                    if (e.target === productModal) {
-                        closeProductModal();
-                    }
-                });
-            }
-            console.log("Dashboard product view initialized without milestone tracking.");
-        });
-    </script>
-@endpush

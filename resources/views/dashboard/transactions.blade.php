@@ -46,11 +46,19 @@
                         <span class="text-lg font-extrabold text-[#A855F7]">Rp {{ number_format($trx->total_amount, 0, ',', '.') }}</span>
                     </div>
 
-                    @if ($trx->status === 'pending' && $trx->snap_token)
-                        <button onclick="payAgain('{{ $trx->snap_token }}')"
-                            class="mt-3 w-full rounded-xl bg-[#A855F7] py-2.5 text-sm font-bold text-white transition hover:bg-purple-600 active:scale-95">
-                            <i class="fa-solid fa-wallet mr-1"></i> Lanjutkan Pembayaran
-                        </button>
+                    @if ($trx->status === 'pending')
+                        <div class="mt-3 flex flex-col gap-2 sm:flex-row">
+                            @if ($trx->snap_token)
+                                <button onclick="payAgain('{{ $trx->snap_token }}', {{ $trx->id }})"
+                                    class="flex-1 rounded-xl bg-[#A855F7] py-2.5 text-sm font-bold text-white transition hover:bg-purple-600 active:scale-95">
+                                    <i class="fa-solid fa-wallet mr-1"></i> Lanjutkan Pembayaran
+                                </button>
+                            @endif
+                            <button onclick="checkStatus({{ $trx->id }}, this)"
+                                class="flex-1 rounded-xl border border-slate-200 bg-white py-2.5 text-sm font-bold text-navy-600 transition hover:bg-slate-50 active:scale-95">
+                                <i class="fa-solid fa-rotate mr-1"></i> Cek Status Pembayaran
+                            </button>
+                        </div>
                     @endif
                 </div>
             @endforeach
@@ -65,12 +73,32 @@
         <script src="https://app.sandbox.midtrans.com/snap/snap.js"
             data-client-key="{{ config('services.midtrans.client_key') }}"></script>
         <script>
-            function payAgain(token) {
+            // Tarik status otoritatif dari Midtrans lewat server (webhook tak bisa
+            // menjangkau localhost), lalu muat ulang agar badge status update.
+            function syncThenReload(id, btn) {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mengecek...';
+                }
+                fetch(`/dashboard/transactions/${id}/sync`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                }).finally(() => location.reload());
+            }
+
+            function payAgain(token, id) {
                 snap.pay(token, {
-                    onSuccess: () => location.reload(),
-                    onPending: () => location.reload(),
+                    onSuccess: () => syncThenReload(id),
+                    onPending: () => syncThenReload(id),
                     onError: (e) => alert('Pembayaran gagal: ' + (e?.status_message || 'coba lagi.')),
                 });
+            }
+
+            function checkStatus(id, btn) {
+                syncThenReload(id, btn);
             }
         </script>
     @endif

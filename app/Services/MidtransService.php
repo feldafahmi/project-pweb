@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Transaction as MidtransTransaction;
@@ -89,7 +90,17 @@ class MidtransService
             $res = MidtransTransaction::status($orderId);
             return json_decode(json_encode($res), true);
         } catch (\Throwable $e) {
-            // 404 Not Found = belum ada percobaan bayar untuk order_id ini.
+            // 404 Not Found = belum ada percobaan bayar untuk order_id ini (normal).
+            // Error lain (401 server key salah, 5xx, jaringan) BUKAN "belum bayar" —
+            // kalau ditelan diam-diam, transaksi yang sebenarnya lunas akan macet di
+            // 'pending' tanpa jejak. Log agar penyebab "sudah bayar belum sinkron"
+            // bisa didiagnosis.
+            if (! str_contains($e->getMessage(), '404')) {
+                Log::warning('Midtrans fetchStatus gagal (bukan 404)', [
+                    'order_id' => $orderId,
+                    'error'    => $e->getMessage(),
+                ]);
+            }
             return null;
         }
     }

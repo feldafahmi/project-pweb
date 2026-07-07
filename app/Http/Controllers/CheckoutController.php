@@ -97,9 +97,38 @@ class CheckoutController extends Controller
         }
 
         return response()->json([
-            'success'    => true,
-            'snap_token' => $snap['token'],
-            'total'      => $total,
+            'success'        => true,
+            'snap_token'     => $snap['token'],
+            'transaction_id' => $transaction->id,
+            'total'          => $total,
+        ]);
+    }
+
+    /**
+     * POST /dashboard/transactions/{transaction}/sync
+     * Tarik status pembayaran langsung dari Midtrans (Status API) lalu update DB.
+     *
+     * Ini kunci untuk lingkungan lokal: webhook Midtrans (server-to-server) tidak
+     * bisa menjangkau localhost, sehingga status transaksi tak pernah berubah dari
+     * 'pending'. Endpoint ini melakukan panggilan KELUAR ke Midtrans (berjalan
+     * normal dari localhost) sebagai sumber kebenaran — dipanggil otomatis setelah
+     * bayar dan lewat tombol "Cek Status" di riwayat pembelian.
+     */
+    public function syncStatus(Request $request, Transaction $transaction, MidtransService $midtrans)
+    {
+        abort_if($transaction->user_id !== auth()->id(), 403, 'Tidak diizinkan.');
+
+        // Sudah final 'paid' → tidak perlu tanya Midtrans lagi.
+        if ($transaction->status !== 'paid') {
+            $payload = $midtrans->fetchStatus($transaction->code);
+            if ($payload) {
+                $midtrans->applyStatus($transaction, $payload);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'status'  => $transaction->refresh()->status,
         ]);
     }
 

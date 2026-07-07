@@ -58,6 +58,20 @@
         const cartContainer = document.getElementById('cart-items-container');
         const emptyMsg = document.getElementById('empty-cart-msg');
 
+        // ID produk yang sudah dimiliki user (dari transaksi paid di server).
+        const OWNED_IDS = @json($ownedIds);
+
+        // Buang item yang sudah dibeli dari keranjang, lalu simpan kembali.
+        // Mengembalikan array cart yang sudah bersih.
+        function pruneOwnedItems(cart) {
+            const cleaned = cart.filter(item => !OWNED_IDS.includes(item.id));
+            if (cleaned.length !== cart.length) {
+                localStorage.setItem('markup_cart', JSON.stringify(cleaned));
+                window.markupUpdateCartBadge?.(); // segarkan badge navbar bila ada
+            }
+            return cleaned;
+        }
+
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -69,6 +83,9 @@
         function loadCart() {
             // Ambil data dari local storage (jika kosong, array [])
             let cart = JSON.parse(localStorage.getItem('markup_cart')) || [];
+
+            // Singkirkan produk yang sudah dibeli agar tak muncul lagi di keranjang.
+            cart = pruneOwnedItems(cart);
 
             // Reset kontainer
             cartContainer.innerHTML = '';

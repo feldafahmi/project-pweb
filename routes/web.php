@@ -16,6 +16,7 @@ Route::view('/', 'home')->name('home');
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
 Route::get('/produk', [ProductController::class, 'index'])->name('produk');
+Route::get('/produk/{product}', [ProductController::class, 'show'])->name('produk.show');
 
 Route::get('/tentang-kami/profil-mentor', function () {
     return view('profil-mentor');
@@ -40,8 +41,10 @@ Route::middleware('auth')->group(function () {
     // Dashboard (User/Student Area)
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
+        Route::get('/produk/{product}', [DashboardController::class, 'learn'])->name('learn');
         Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
         Route::get('/transactions', [DashboardController::class, 'transactions'])->name('transactions');
+        Route::post('/transactions/{transaction}/sync', [CheckoutController::class, 'syncStatus'])->name('transactions.sync');
 
         // Milestone Tracker API
         Route::get('/milestones', [MilestoneController::class, 'index'])->name('milestones.index');
@@ -50,11 +53,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('/milestones/{id}', [MilestoneController::class, 'destroy'])->name('milestones.destroy');
         
         Route::get('/keranjang', function () {
-            return view('dashboard.keranjang');
+            // Produk yang sudah dimiliki (transaksi paid) — dipakai front-end untuk
+            // membuang item yang terlanjur dibeli dari keranjang localStorage.
+            $ownedIds = auth()->user()->products()->pluck('id')->values();
+            return view('dashboard.keranjang', compact('ownedIds'));
         })->name('cart');
 
         Route::get('/checkout', function () {
-            return view('dashboard.checkout'); 
+            $ownedIds = auth()->user()->products()->pluck('id')->values();
+            return view('dashboard.checkout', compact('ownedIds'));
         })->name('checkout');
 
         Route::prefix('profile')->name('profile.')->group(function () {
