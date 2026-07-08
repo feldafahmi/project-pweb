@@ -8,6 +8,10 @@
     <meta name="google-client-id" content="{{ config('services.google.client_id') }}">
     <title>@yield('title', 'MARK-UP') | MARK-UP</title>
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.svg') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/Markup-Logo.png') }}">
+
     {{-- Google Identity Services — dipakai tombol "Continue with Google" (lihat app.js) --}}
     <script src="https://accounts.google.com/gsi/client" async></script>
 
