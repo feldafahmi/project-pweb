@@ -13,30 +13,46 @@
 @endphp
 
 @section('content')
-    {{-- 1. BREADCRUMBS --}}
-    <div class="mx-auto max-w-6xl px-4 mt-6">
-        <nav class="flex items-center gap-2 text-sm text-slate-500">
-            <a href="/" class="transition hover:text-[#1A2B56]"><i class="fa-solid fa-house"></i></a>
-            <span>/</span>
-            <span class="text-slate-400 font-medium">Info Lomba</span>
-        </nav>
+    {{-- 1. BREADCRUMB STRIP --}}
+    <div class="border-b border-slate-100 bg-white">
+        <div class="mx-auto flex max-w-6xl items-center gap-2 px-4 py-4 text-sm text-slate-500">
+            <a href="/" class="transition hover:text-[#A855F7]"><i class="fa-solid fa-house"></i></a>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+            <span class="font-semibold text-[#1A2B56]">Info Lomba</span>
+        </div>
     </div>
 
-    {{-- 2. HERO SECTION --}}
-    <section
-        class="relative mb-12 mt-4 flex h-[250px] items-center justify-center overflow-hidden rounded-3xl mx-auto max-w-6xl bg-[#1A2B56]">
-        {{-- Background Image (Bisa diisi nanti) --}}
-        <div class="absolute inset-0 z-0">
-            <img src="{{ asset('img/hero-info-lomba.png') }}" alt="" class="h-full w-full object-cover opacity-30">
-        </div>
+{{-- 2. HERO SECTION (gaya + animasi aurora seperti halaman produk) --}}
+<section class="relative mb-12 flex min-h-[380px] items-center justify-center overflow-hidden bg-navy-800 md:min-h-[440px]">
+    <div class="absolute inset-0 z-0 overflow-hidden">
+        {{-- Foto Marina Bay (sunset) --}}
+        <img src="{{ asset('img/hero-lomba.jpg') }}" alt=""
+            {{-- PERUBAHAN: Ubah object-[center_5%] menjadi object-[center_30%] --}}
+            class="absolute inset-0 h-full w-full object-cover object-[center_30%]">
 
-        <div class="relative z-10 px-4 text-center">
-            <h1 class="mb-3 text-3xl font-black text-white md:text-5xl">Eksplor Kompetisi</h1>
-            <p class="text-slate-200 md:text-lg max-w-xl mx-auto text-sm">
-                Temukan peluang untuk mengasah skill dan membangun portofolio juara di sini.
-            </p>
-        </div>
-    </section>
+        {{-- Peredup foto agar aurora & teks menonjol --}}
+        <div class="absolute inset-0 bg-navy-900/55"></div>
+        {{-- Blob aurora (mix-blend-screen → menyala di atas foto) --}}
+        <span class="animate-aurora absolute -left-24 -top-28 h-96 w-96 rounded-full bg-[#A855F7] opacity-60 mix-blend-screen blur-3xl"
+            style="animation-duration: 12s;"></span>
+        <span class="animate-aurora absolute -right-24 -top-16 h-[30rem] w-[30rem] rounded-full bg-[#6366F1] opacity-55 mix-blend-screen blur-3xl"
+            style="animation-duration: 16s; animation-delay: -5s;"></span>
+        <span class="animate-aurora absolute -bottom-32 left-1/3 h-[28rem] w-[28rem] rounded-full bg-[#EC4899] opacity-50 mix-blend-screen blur-3xl"
+            style="animation-duration: 14s; animation-delay: -9s;"></span>
+        <span class="animate-aurora absolute -bottom-24 right-1/4 h-80 w-80 rounded-full bg-[#22D3EE] opacity-40 mix-blend-screen blur-3xl"
+            style="animation-duration: 18s; animation-delay: -3s;"></span>
+        {{-- Gradient bawah untuk kontras teks --}}
+        <div class="absolute inset-0 bg-gradient-to-t from-navy-900/70 via-navy-900/10 to-transparent"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-3xl px-4 py-14 text-center">
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-white/70 md:text-sm">Info Lomba</p>
+        <h1 class="mb-4 text-4xl font-extrabold leading-tight text-white drop-shadow-sm md:text-5xl">Eksplor Kompetisi</h1>
+        <p class="mx-auto max-w-xl text-base leading-relaxed text-white/90 md:text-lg">
+            Temukan peluang untuk mengasah skill dan membangun portofolio juara di sini.
+        </p>
+    </div>
+</section>
 
     <div class="mx-auto max-w-6xl px-4 pb-24">
 
