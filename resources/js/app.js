@@ -17,7 +17,84 @@ document.addEventListener("DOMContentLoaded", () => {
     initNavbarAuthState();
     initNavbarCart();
     initFlashToast();
+    initScrollReveal();
+    initCountUp();
 });
+
+/* ========== Scroll reveal (fade/slide-up saat masuk viewport) ========== */
+function initScrollReveal() {
+    const els = document.querySelectorAll("[data-reveal]");
+    if (!els.length) return;
+
+    // Hormati preferensi reduce-motion: langsung tampilkan tanpa animasi.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        els.forEach((el) => el.classList.add("is-revealed"));
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries, obs) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                const delay = el.getAttribute("data-reveal-delay") || 0;
+                el.style.transitionDelay = `${delay}ms`;
+                el.classList.add("is-revealed");
+                obs.unobserve(el);
+            });
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    els.forEach((el) => observer.observe(el));
+}
+
+/* ========== Count-up angka statistik ========== */
+function initCountUp() {
+    const els = document.querySelectorAll("[data-countup]");
+    if (!els.length) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const run = (el) => {
+        const target = parseFloat(el.getAttribute("data-countup"));
+        const decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
+        const prefix = el.getAttribute("data-prefix") || "";
+        const suffix = el.getAttribute("data-suffix") || "";
+        const format = (v) =>
+            prefix + v.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + suffix;
+
+        if (reduce) {
+            el.textContent = format(target);
+            return;
+        }
+
+        const duration = 1400;
+        const start = performance.now();
+        const tick = (now) => {
+            const p = Math.min((now - start) / duration, 1);
+            // easeOutCubic
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = format(target * eased);
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = format(target);
+        };
+        requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+        (entries, obs) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                run(entry.target);
+                obs.unobserve(entry.target);
+            });
+        },
+        { threshold: 0.5 }
+    );
+
+    els.forEach((el) => observer.observe(el));
+}
 
 /* ========== Mobile menu ========== */
 function initMobileMenu() {

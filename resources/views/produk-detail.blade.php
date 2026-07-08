@@ -22,10 +22,19 @@
             'cal' => 'fa-calendar', 'bolt' => 'fa-bolt',
         ];
 
-        $originalPrice = $product->original_price ?? $product->price * 1.5;
+        // Diskon HANYA ditampilkan bila benar-benar ada original_price yang lebih
+        // tinggi — tidak lagi mengarang coretan harga (praktik menyesatkan).
+        $hasDiscount = $product->original_price && $product->original_price > $product->price;
+        $discountPct = $hasDiscount
+            ? round(($product->original_price - $product->price) / $product->original_price * 100)
+            : 0;
+
+        // Ringkasan ulasan.
+        $reviewCount = $product->reviews->count();
+        $reviewAvg   = $reviewCount ? round($product->reviews->avg('stars'), 1) : 0;
     @endphp
 
-    <div class="mx-auto max-w-5xl px-4 py-8">
+    <div class="mx-auto max-w-5xl px-4 pt-8 pb-28 md:pb-8">
 
         {{-- BREADCRUMB --}}
         <div class="mb-6 flex items-center gap-2 text-sm text-slate-500">
@@ -84,9 +93,12 @@
 
                 {{-- HARGA + CTA --}}
                 <div class="mt-auto border-t border-slate-100 pt-5">
-                    <div class="mb-4">
-                        <span class="block text-sm text-slate-400 line-through">Rp {{ number_format($originalPrice, 0, ',', '.') }}</span>
-                        <span class="block text-3xl font-extrabold text-[#A855F7]">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                    <div class="mb-4 flex items-end gap-3">
+                        <span class="text-3xl font-extrabold text-[#A855F7]">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                        @if($hasDiscount)
+                            <span class="mb-1 text-sm text-slate-400 line-through">Rp {{ number_format($product->original_price, 0, ',', '.') }}</span>
+                            <span class="mb-1 rounded-full bg-purple-100 px-2 py-0.5 text-xs font-extrabold text-[#A855F7]">Hemat {{ $discountPct }}%</span>
+                        @endif
                     </div>
 
                     @if($purchased)
@@ -95,12 +107,12 @@
                         </div>
                     @else
                         <div class="flex items-center gap-3">
-                            <button type="button" onclick="addToCart()"
+                            <button type="button" onclick="addToCart()" aria-label="Tambah ke keranjang"
                                 class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-[#A855F7] text-[#A855F7] transition hover:bg-purple-50">
                                 <i class="fa-solid fa-cart-shopping text-xl"></i>
                             </button>
                             <button type="button" onclick="addToCart()"
-                                class="flex h-12 w-full items-center justify-center rounded-xl bg-[#A855F7] text-lg font-bold italic text-white shadow-lg shadow-purple-200 transition hover:bg-purple-600">
+                                class="flex h-12 w-full items-center justify-center rounded-xl bg-[#A855F7] text-lg font-bold text-white shadow-lg shadow-purple-200 transition hover:bg-purple-600">
                                 Beli Sekarang
                             </button>
                         </div>
@@ -145,7 +157,9 @@
                         <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white">
                             {{-- Header section (toggle) --}}
                             <button type="button" onclick="toggleSection({{ $sIndex }})"
-                                class="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-slate-50">
+                                id="section-btn-{{ $sIndex }}" aria-controls="section-{{ $sIndex }}"
+                                aria-expanded="{{ $sIndex === 0 ? 'true' : 'false' }}"
+                                class="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#A855F7]">
                                 <div>
                                     <h3 class="font-bold text-[#1A2B56]">{{ $section['title'] }}</h3>
                                     @if($section['subtitle'])
@@ -257,6 +271,22 @@
                     <div class="h-6 w-1.5 rounded-full bg-yellow-400"></div>
                     <h2 class="text-xl font-bold text-[#1A2B56]">Ulasan Peserta</h2>
                 </div>
+
+                {{-- Ringkasan rating --}}
+                <div class="mb-5 flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-5">
+                    <div class="text-center">
+                        <div class="text-4xl font-extrabold leading-none text-[#1A2B56]">{{ number_format($reviewAvg, 1) }}</div>
+                        <div class="mt-1 text-yellow-400">
+                            @for($i = 0; $i < 5; $i++)
+                                <i class="fa-{{ $i < round($reviewAvg) ? 'solid' : 'regular' }} fa-star text-xs"></i>
+                            @endfor
+                        </div>
+                    </div>
+                    <div class="border-l border-slate-100 pl-4 text-sm text-slate-500">
+                        Berdasarkan <span class="font-bold text-[#1A2B56]">{{ $reviewCount }}</span> ulasan peserta
+                    </div>
+                </div>
+
                 <div class="space-y-3">
                     @foreach($product->reviews as $review)
                         <div class="rounded-2xl border border-slate-100 bg-white p-5">
@@ -282,6 +312,22 @@
             </a>
         </div>
     </div>
+
+    {{-- STICKY BUY BAR (mobile) — jaga CTA tetap terlihat saat scroll panjang --}}
+    @unless($purchased)
+        <div class="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] backdrop-blur md:hidden">
+            <div class="shrink-0">
+                <span class="block text-lg font-extrabold leading-none text-[#A855F7]">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                @if($hasDiscount)
+                    <span class="text-xs text-slate-400 line-through">Rp {{ number_format($product->original_price, 0, ',', '.') }}</span>
+                @endif
+            </div>
+            <button type="button" onclick="addToCart()"
+                class="ml-auto flex h-11 grow items-center justify-center rounded-xl bg-[#A855F7] px-6 text-base font-bold text-white shadow-lg shadow-purple-200 transition hover:bg-purple-600">
+                Beli Sekarang
+            </button>
+        </div>
+    @endunless
 @endsection
 
 @push('scripts')
@@ -299,9 +345,11 @@
         function toggleSection(index) {
             const panel = document.getElementById('section-' + index);
             const chevron = document.getElementById('chevron-' + index);
+            const btn = document.getElementById('section-btn-' + index);
             const open = !panel.classList.contains('hidden');
             panel.classList.toggle('hidden');
             chevron.style.transform = open ? '' : 'rotate(180deg)';
+            if (btn) btn.setAttribute('aria-expanded', open ? 'false' : 'true');
         }
 
         // Set rotasi awal chevron untuk section yang default terbuka.
