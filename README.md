@@ -1,59 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/img/favicon.svg" width="96" alt="MARK-UP logo">
 </p>
 
-## About Laravel
+<h1 align="center">MARK-UP</h1>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  Platform EdTech untuk <strong>mentoring</strong> & persiapan <strong>lomba business case</strong>.<br>
+  Dibangun dengan Laravel 12, Blade, Tailwind CSS 4, dan API Sanctum untuk klien mobile.
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tentang Proyek
 
-## Learning Laravel
+**MARK-UP** menyajikan halaman marketing publik, autentikasi pengguna, katalog produk/kelas,
+informasi lomba, on-demand mentoring, serta area dashboard untuk siswa, mentor, dan admin.
+Selain web (Blade SSR), aplikasi juga mengekspos **REST API** (`/api/*`) yang diamankan dengan
+Laravel Sanctum untuk dikonsumsi klien eksternal (mobile/Flutter).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Fitur Utama
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Landing publik** — beranda, tentang kami, profil mentor, info lomba, kontak.
+- **Katalog produk** — daftar produk dengan filter & pencarian, halaman detail, dan kurikulum belajar.
+- **On-Demand Mentoring** — halaman publik daftar mentor + CRUD mentor di panel admin.
+- **Info Lomba** — daftar kompetisi business case (publik + CRUD admin).
+- **Keranjang & Checkout** — integrasi pembayaran **Midtrans** (webhook notifikasi + sinkronisasi status).
+- **Milestone Tracker** — checklist progres belajar per pengguna.
+- **Manajemen peran** — `admin`, `mentor`, dan `user` dengan middleware dan area dashboard terpisah.
+- **REST API bertoken** — produk, mentor, kompetisi, transaksi, cart, review, dan profil.
 
-## Laravel Sponsors
+## Tech Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Lapisan | Teknologi |
+|---|---|
+| Backend | Laravel 12 (PHP) |
+| Auth API | Laravel Sanctum (Bearer token) |
+| View | Blade SSR (`layouts/app`, `guest`, `dashboard`, `admin`) |
+| Styling | Tailwind CSS 4 via `@tailwindcss/vite` |
+| Build | Vite |
+| Pembayaran | Midtrans |
+| Testing | PHPUnit (SQLite in-memory) |
 
-### Premium Partners
+## Persyaratan
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- PHP 8.2+ dan Composer
+- Node.js 18+ dan npm
+- Database (MySQL/MariaDB untuk pemakaian nyata; SQLite untuk testing)
 
-## Contributing
+## Setup Cepat
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Pasang dependency, generate key, migrasi, dan build aset sekaligus
+composer run setup
 
-## Code of Conduct
+# Isi data demo (produk, mentor, lomba, kurikulum, review, akun contoh)
+php artisan migrate:fresh --seed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Jalankan semua service dev (server PHP, queue, Pail logs, Vite) secara paralel
+composer run dev
+```
 
-## Security Vulnerabilities
+Atau jalankan aset secara terpisah:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+npm run dev     # Vite dev server dengan HMR
+npm run build   # Build produksi
+```
 
-## License
+## Akun Demo
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Tersedia setelah `--seed` (lihat `database/seeders/DatabaseSeeder.php`):
+
+| Peran | Email | Password |
+|---|---|---|
+| Admin | `admin@markup.com` | `passwordadmin` |
+| Admin (mobile) | `admin@markup.test` | `admin12345` |
+| Mentor | `mentor@markup.com` | `passwordmentor` |
+
+## Struktur Routing
+
+- **`routes/web.php`** — halaman Blade + submit form auth, dashboard (`/dashboard/*`),
+  panel admin (`/admin/*`), dan area mentor (`/mentor/*`).
+- **`routes/api.php`** — endpoint JSON `/api/*`; endpoint tulis dilindungi `auth:sanctum`
+  (dan middleware `admin` untuk operasi admin). Webhook Midtrans diamankan lewat signature.
+
+## Testing
+
+```bash
+composer run test                              # Semua tes (config cache dibersihkan dulu)
+php artisan test tests/Feature/ExampleTest.php # Satu file tes
+```
+
+Tes memakai database SQLite in-memory (dikonfigurasi di `phpunit.xml`) — tidak menyentuh database aplikasi.
+
+## Branding
+
+Warna brand didefinisikan sebagai CSS variable di `resources/css/app.css`:
+`--navy: #1a2b56`, `--yellow: #f5eb5e`, aksen ungu `#A855F7`. Logo ada di
+`public/img/Markup-Logo.png`; favicon di `public/img/favicon.svg`.
