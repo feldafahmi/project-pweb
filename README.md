@@ -1,6 +1,5 @@
 <p align="center">
-  <img src="public/img
-/Markup-Logo.png" width="96" alt="MARK-UP logo">
+  <img src="public/img/Markup-Logo.png" width="96" alt="MARK-UP logo">
 </p>
 
 <h1 align="center">MARK-UP</h1>
