@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
                 'duration'       => '12 Jam',
                 'is_featured'    => true,
                 'is_bestseller'  => true,
-                'image_url'      => 'https://picsum.photos/seed/winner-class/600/400',
+                'image_url'      => 'img/products/winner-class.jpg',
             ],
             [
                 'type'           => 'modul',
@@ -32,7 +32,7 @@ class ProductSeeder extends Seeder
                 'duration'       => '5 Bab',
                 'is_featured'    => true,
                 'is_bestseller'  => false,
-                'image_url'      => 'https://picsum.photos/seed/modul-pitch/600/400',
+                'image_url'      => 'img/products/pitch-deck.jpg',
             ],
             [
                 'type'           => 'modul',
@@ -44,7 +44,7 @@ class ProductSeeder extends Seeder
                 'duration'       => '6 Bab',
                 'is_featured'    => true,
                 'is_bestseller'  => true,
-                'image_url'      => 'https://picsum.photos/seed/modul-bmc/600/400',
+                'image_url'      => 'img/products/bmc.jpg',
             ],
             [
                 'type'           => 'kelas',
@@ -56,7 +56,7 @@ class ProductSeeder extends Seeder
                 'duration'       => '10 Jam',
                 'is_featured'    => true,
                 'is_bestseller'  => false,
-                'image_url'      => 'https://picsum.photos/seed/kelas-uiux/600/400',
+                'image_url'      => 'img/products/uiux.jpg',
             ],
             [
                 'type'           => 'kelas',
@@ -68,7 +68,7 @@ class ProductSeeder extends Seeder
                 'duration'       => '8 Jam',
                 'is_featured'    => false,
                 'is_bestseller'  => true,
-                'image_url'      => 'https://picsum.photos/seed/kelas-lkti/600/400',
+                'image_url'      => 'img/products/lkti.jpg',
             ],
             [
                 'type'           => 'bootcamp',
@@ -80,7 +80,7 @@ class ProductSeeder extends Seeder
                 'duration'       => '30 Hari',
                 'is_featured'    => true,
                 'is_bestseller'  => false,
-                'image_url'      => 'https://picsum.photos/seed/bootcamp-bc/600/400',
+                'image_url'      => 'img/products/bootcamp-bc.jpg',
             ],
         ];
 

@@ -33,6 +33,20 @@ class CompetitionSeeder extends Seeder
             'Startup Hub Indonesia',
         ];
 
+        // Poster lomba yang tersedia di public/img — dipakai bergiliran agar
+        // tiap kompetisi tampil berbeda (sebelumnya semua memakai iyref.jpeg).
+        $images = [
+            'img/iyref.jpeg',
+            'img/ignite.jpeg',
+            'img/nbcc.jpeg',
+            'img/npbc.jpeg',
+            'img/dreamcareer.jpeg',
+            'img/ascend.jpg',
+            'img/loreal.jpg',
+            'img/hsbc.png',
+        ];
+
+        $seq = 0;
         foreach ($categories as $ci => $category) {
             for ($i = 1; $i <= 3; $i++) {
                 $start = Carbon::now()->addDays(($ci * 10) + ($i * 5));
@@ -48,9 +62,11 @@ class CompetitionSeeder extends Seeder
                     'registration_fee' => $fees[$pick % count($fees)],
                     'total_prize'      => $prizes[$pick % count($prizes)],
                     'organizer'        => $organizers[$pick % count($organizers)],
-                    'image_url'        => 'img/iyref.jpeg',
+                    'image_url'        => $images[$seq % count($images)],
                     'link_pendaftaran' => 'https://example.com/daftar',
                 ]);
+
+                $seq++;
             }
         }
     }

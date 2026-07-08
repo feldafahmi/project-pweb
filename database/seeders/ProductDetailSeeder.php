@@ -177,7 +177,7 @@ class ProductDetailSeeder extends Seeder
                 'duration'       => '145 hal',
                 'is_featured'    => false,
                 'is_bestseller'  => false,
-                'image_url'      => 'https://picsum.photos/seed/modul-debat/600/400',
+                'image_url'      => 'img/products/debat.jpg',
             ]
         );
         $modul->update([
@@ -249,7 +249,7 @@ class ProductDetailSeeder extends Seeder
                 'duration'       => '30 Hari',
                 'is_featured'    => false,
                 'is_bestseller'  => false,
-                'image_url'      => 'https://picsum.photos/seed/bootcamp-bp/600/400',
+                'image_url'      => 'img/products/business-plan.jpg',
             ]
         );
         $bootcamp->update([
