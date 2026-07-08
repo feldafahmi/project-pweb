@@ -29,3 +29,5 @@ CLAUDE.md
 # Setelan Claude Code — berisi allow-list perintah lokal (path server, dsb). Jangan di-commit.
 /.claude/settings.json
 /.claude/settings.local.json
+/AGENTS.md
+/DEPLOY-CPANEL.md
