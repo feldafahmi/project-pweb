@@ -10,6 +10,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\MentorDashboardController;
+use App\Http\Controllers\MentorWebController;
 
 // Public Views
 Route::view('/', 'home')->name('home');
@@ -23,6 +24,7 @@ Route::get('/tentang-kami/profil-mentor', function () {
 })->name('about.mentor');
 
 Route::get('/info-lomba', [CompetitionController::class, 'publicIndex'])->name('lomba');
+Route::get('/on-demand-mentoring', [MentorWebController::class, 'publicIndex'])->name('mentoring');
 
 // Public Guest Auth Views & Submissions
 Route::middleware('guest')->group(function () {
@@ -87,6 +89,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/competitions', [CompetitionController::class, 'store'])->name('competitions.store');
         Route::put('/competitions/{id}', [CompetitionController::class, 'update'])->name('competitions.update');
         Route::delete('/competitions/{id}', [CompetitionController::class, 'destroy'])->name('competitions.destroy');
+
+        // On Demand Mentoring — Mentors CRUD
+        Route::get('/mentors', [MentorWebController::class, 'adminIndex'])->name('mentors.index');
+        Route::post('/mentors', [MentorWebController::class, 'store'])->name('mentors.store');
+        Route::put('/mentors/{id}', [MentorWebController::class, 'update'])->name('mentors.update');
+        Route::delete('/mentors/{id}', [MentorWebController::class, 'destroy'])->name('mentors.destroy');
 
         // Users Management
         Route::get('/users', [UserController::class, 'adminIndex'])->name('users.index');

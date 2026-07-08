@@ -38,6 +38,7 @@
             $adminLinks = [
                 ['route' => 'admin.products.index', 'label' => 'Manajemen Produk', 'icon' => 'fa-cube'],
                 ['route' => 'admin.competitions.index', 'label' => 'Manajemen Info Lomba', 'icon' => 'fa-trophy'],
+                ['route' => 'admin.mentors.index', 'label' => 'On Demand Mentoring', 'icon' => 'fa-chalkboard-user'],
                 ['route' => 'admin.users.index', 'label' => 'Manajemen Pengguna', 'icon' => 'fa-users'],
             ];
         }
