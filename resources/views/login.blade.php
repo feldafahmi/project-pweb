@@ -97,19 +97,14 @@
                 </form>
 
                 {{-- Social Login --}}
-                <div class="mt-8">
+                <div class="mt-8" data-google-area>
                     <div class="mb-5 flex items-center gap-4">
                         <span class="h-px flex-1 bg-gray-100"></span>
                         <span class="text-xs text-gray-400">Or Continue With</span>
                         <span class="h-px flex-1 bg-gray-100"></span>
                     </div>
-                    <button type="button" data-google-signin
-                        class="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" class="h-5 w-5 object-contain">
-                        <span>Continue with Google</span>
-                    </button>
-                    {{-- Container tersembunyi tempat GIS me-render tombol asli; klik diteruskan dari tombol di atas --}}
-                    <div data-google-btn class="sr-only" aria-hidden="true"></div>
+                    {{-- Google Identity Services me-render tombol resminya di sini (lihat app.js) --}}
+                    <div data-google-btn class="flex min-h-11 justify-center"></div>
                 </div>
 
             </div>

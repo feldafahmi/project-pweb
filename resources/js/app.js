@@ -322,22 +322,27 @@ function onAuthSuccess(user) {
 }
 
 /* ========== Google Sign-In (GIS) ========== */
-// Tombol "Continue with Google" (data-google-signin) meneruskan klik ke tombol
-// asli Google Identity Services yang di-render tersembunyi (data-google-btn).
-// Google mengembalikan ID token → dikirim ke /auth/google untuk login session.
+// Google Identity Services me-render tombol resminya sendiri ke dalam
+// [data-google-btn]. Saat pengguna klik, Google mengembalikan ID token →
+// dikirim ke /auth/google untuk login berbasis session.
+//
+// Catatan: pola lama (render tombol tersembunyi lalu klik-programatik dari
+// tombol custom) tidak lagi bekerja — GIS kini merender tombolnya di dalam
+// iframe lintas-domain yang tidak bisa di-klik dari parent. Karena itu kita
+// pakai tombol native yang dirender langsung (cara yang didukung resmi).
 function initGoogleSignIn() {
-    const trigger = document.querySelector("[data-google-signin]");
     const holder = document.querySelector("[data-google-btn]");
-    if (!trigger || !holder) return;
+    if (!holder) return;
 
     const form = document.querySelector("[data-auth-form]");
     const clientId = document
         .querySelector('meta[name="google-client-id"]')
         ?.getAttribute("content");
 
+    // Google Sign-In belum dikonfigurasi di server → sembunyikan seluruh area.
     if (!clientId) {
-        trigger.disabled = true;
-        trigger.title = "Google Sign-In belum dikonfigurasi di server";
+        const wrapper = holder.closest("[data-google-area]") || holder;
+        wrapper.style.display = "none";
         return;
     }
 
@@ -353,11 +358,14 @@ function initGoogleSignIn() {
                 if (res?.credential) submitGoogleToken(form, res.credential);
             },
         });
-        // Render tombol GIS asli (tersembunyi) supaya bisa di-klik programatik.
+        // Render tombol resmi Google langsung ke dalam container (terlihat).
         window.google.accounts.id.renderButton(holder, {
             type: "standard",
             theme: "outline",
             size: "large",
+            text: "continue_with",
+            shape: "pill",
+            logo_alignment: "center",
         });
         ready = true;
         return true;
@@ -368,19 +376,6 @@ function initGoogleSignIn() {
         if (ensureSetup() || attempt > 40) return;
         setTimeout(() => waitForGis(attempt + 1), 150);
     })();
-
-    trigger.addEventListener("click", () => {
-        if (!ensureSetup()) {
-            showAlert(form, "error", "Google Sign-In masih memuat, coba lagi sebentar.");
-            return;
-        }
-        const realBtn = holder.querySelector('div[role="button"], button');
-        if (realBtn) {
-            realBtn.click();
-        } else {
-            showAlert(form, "error", "Tidak dapat membuka Google Sign-In. Muat ulang halaman.");
-        }
-    });
 }
 
 function submitGoogleToken(form, idToken) {
